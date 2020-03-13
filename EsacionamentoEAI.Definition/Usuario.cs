@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EsacionamentoEAI.Definition
+namespace EstacionamentoEAI.Definition
 {
     public class Usuario
     {

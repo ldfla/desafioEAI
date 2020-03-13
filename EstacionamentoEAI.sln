@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstacionamentoEAI", "Estaci
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstacionamentoEAI.DAO", "EstacionamentoEAI.DAO\EstacionamentoEAI.DAO.csproj", "{3FCB8D5C-DEFA-4D74-8A1F-64BFF9C6CAAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EsacionamentoEAI.Definition", "EsacionamentoEAI.Definition\EsacionamentoEAI.Definition.csproj", "{FABF9555-1B28-4CA1-B2F3-3F5FD309DF40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstacionamentoEAI.Definition", "EsacionamentoEAI.Definition\EstacionamentoEAI.Definition.csproj", "{FABF9555-1B28-4CA1-B2F3-3F5FD309DF40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EsacionamentoEAI.UnitTest", "EsacionamentoEAI.UnitTest\EsacionamentoEAI.UnitTest.csproj", "{FF07AA8D-E159-406E-9D0B-25AE5D1638E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstacionamentoEAI.UnitTest", "EsacionamentoEAI.UnitTest\EstacionamentoEAI.UnitTest.csproj", "{FF07AA8D-E159-406E-9D0B-25AE5D1638E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-﻿namespace EsacionamentoEAI.Definition
+﻿namespace EstacionamentoEAI.Definition
 {
     public class Modelo
     {

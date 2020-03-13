@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EsacionamentoEAI.Definition
+namespace EstacionamentoEAI.Definition
 {
     public class Registro
     {

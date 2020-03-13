@@ -5,7 +5,7 @@ using EstacionamentoEAI.DAO;
 using System.Data.SqlClient;
 using System.Data;
 
-namespace EsacionamentoEAI.UnitTest
+namespace EstacionamentoEAI.UnitTest
 {
     [TestClass]
     public class EstacionamentoEAIUnitTest
@@ -21,6 +21,7 @@ namespace EsacionamentoEAI.UnitTest
         [TestMethod] 
         public void AutenticarUsuario()
         {
+            bool autenticado = EstacionamentoEAI.Controllers.
         }
         [TestMethod]
 

@@ -58,9 +58,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EsacionamentoEAI.Definition\EsacionamentoEAI.Definition.csproj">
+    <ProjectReference Include="..\EsacionamentoEAI.Definition\EstacionamentoEAI.Definition.csproj">
       <Project>{fabf9555-1b28-4ca1-b2f3-3f5fd309df40}</Project>
-      <Name>EsacionamentoEAI.Definition</Name>
+      <Name>EstacionamentoEAI.Definition</Name>
     </ProjectReference>
     <ProjectReference Include="..\EstacionamentoEAI.DAO\EstacionamentoEAI.DAO.csproj">
       <Project>{3fcb8d5c-defa-4d74-8a1f-64bff9c6caad}</Project>
