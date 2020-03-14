@@ -14,7 +14,7 @@ namespace EstacionamentoEAI.Controllers
     {
         IConnection conn = new Connection();
         Estacionamento estacionamento = new Estacionamento();
-
+        
         // GET: Estacionamento
         [HttpGet]
         public ActionResult Index()
@@ -39,79 +39,94 @@ namespace EstacionamentoEAI.Controllers
         {
             string action = formCollection["controle_btn"];
             string placa = formCollection["placaVeiculo"].ToUpper();
-            int modelo = int.Parse(formCollection["modeloVeiculo"]);
-            string observacao = formCollection["observacaoVeiculo"];
 
             switch (action)
             {
                 case "entrada":
-                    Veiculo veiculo = new Veiculo
-                    {
-                        Placa = placa,
-                        Modelo = new Modelo { Id = modelo },
-                        Observacao = observacao
-                    };
-                    if (RegistraEntrada(veiculo) > 0)
+                    
+                    if (RegistraEntrada(formCollection) > 0)
                     {
                         RedirectToAction("Index");
                     }
                     else {
-                        return View();
+                        return RedirectToAction("Estacionado", new { placa = placa });
                     }
                     break;
                 case "saida":
                     break;
                 default:
-                    break;
+                    return View();                    
             }
-            if (action == "entrada")
-            {
-
-                
-            }
-        
+                    
             return RedirectToAction("Index");
         }
+        
+        [HttpGet]
+        public ActionResult Estacionado(string placa)
+        {
+            ViewBag.Placa = placa.ToUpper();
+            return View();
+        }
 
-              
 
         #region private Methods
 
-        public int RegistraEntrada(Veiculo veiculo)
+        public int RegistraEntrada(FormCollection formCollection)
         {
+            string placa = formCollection["placaVeiculo"].ToUpper();
+            string cliente = formCollection["nomeCliente"].ToUpper();
+            int modelo = int.Parse(formCollection["modeloVeiculo"]);
+            string observacao = formCollection["observacaoVeiculo"];
+
+            Veiculo veiculo = new Veiculo {
+                Placa = placa,
+                Modelo = new Modelo { Id = modelo },
+                Observacao = observacao, 
+                Cliente = new Cliente()
+            };
+
             int registroId = 0;
             using (IConnection conn = new Connection())
             {
-                IDAO<Veiculo> veiculoDAO = new VeiculoDAO(conn);
-                //Verifica se o Veiculo já existe no DB
-                Veiculo verificaVeiculo = veiculoDAO.BuscarItem("placa", veiculo.Placa);
+                EstacionamentoDAO estacionamentoDAO = new EstacionamentoDAO(conn);
+                estacionamento = estacionamentoDAO.BuscarItem("vagas");
+                RegistroDAO registroDAO = new RegistroDAO(conn);
+                int vagasOcupadas = registroDAO.ContaVagasOcupadas(estacionamento.Id);
 
-                if (verificaVeiculo == null)
+                //Verifica se existem vagas disponiveis
+                if (estacionamento.NumeroDeVagas > vagasOcupadas)
                 {
-                    veiculo = veiculoDAO.Inserir(veiculo);
-                } else
-                {
-                    veiculo = verificaVeiculo;
-                }
+                    VeiculoDAO veiculoDAO = new VeiculoDAO(conn);
+                    //Verifica se o Veiculo já existe no DB
+                    Veiculo verificaVeiculo = veiculoDAO.BuscarItem("placa", veiculo.Placa);
 
-                IDAO<Registro> registroDAO = new RegistroDAO(conn);
-                //Verifica se o Veiculo já está estacionado 
-                Registro registro = registroDAO.BuscarItem("placa", veiculo.Placa);
-
-                if (registro == null)
-                {
-                    registro = new Registro
+                    if (verificaVeiculo == null)
                     {
-                        DataDeEntrada = DateTime.Now,
-                        Estacionamento = estacionamento,
-                        UsuarioEntrada = AutenticaFuncionarioFake(),
-                        Veiculo = veiculo,
-                    };
+                        veiculo = veiculoDAO.Inserir(veiculo);
+                    }
+                    else
+                    {
+                        veiculo = verificaVeiculo;
+                    }
 
-                    Registro novoRegistro = registroDAO.Inserir(registro);
-                    registroId = novoRegistro.Id;
+                    //Verifica se o Veiculo já está estacionado 
+                    Registro registro = registroDAO.BuscarItem("placa", veiculo.Placa);
+
+                    if (registro == null)
+                    {
+                        registro = new Registro
+                        {
+                            DataDeEntrada = DateTime.Now,
+                            Estacionamento = estacionamento,
+                            UsuarioEntrada = AutenticaFuncionarioFake(),
+                            Veiculo = veiculo,
+                        };
+
+                        Registro novoRegistro = registroDAO.Inserir(registro);
+                        registroId = novoRegistro.Id;
+                    }
+                    conn.FecharConexao();
                 }
-                conn.FecharConexao();
             }
             return registroId;
         }
@@ -132,11 +147,13 @@ namespace EstacionamentoEAI.Controllers
                     TimeSpan timeSpan = registro.DataDeSaida - registro.DataDeEntrada;
                     int horas = Convert.ToInt32(Math.Ceiling(timeSpan.TotalHours));
                     registro.Valor = horas * registro.CustoHora;
+                } else
+                {
+                    conn.FecharConexao(); 
+                    return atualizado;
                 }
 
                 atualizado = registroDAO.Atualizar(registro);
-
-                conn.FecharConexao();
             }
 
             return atualizado;

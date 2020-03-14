@@ -89,19 +89,25 @@ namespace EstacionamentoEAI.DAO
                 SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
                 if (sqlDataReader.HasRows)
                 {
-                    sqlDataReader.Read();
-                    registro = new Registro
+                    if (sqlDataReader.Read())
                     {
-                        Id = sqlDataReader.GetInt32(0),
-                        Estacionamento = new Estacionamento { Id = sqlDataReader.GetInt32(1) },
-                        Veiculo = new Veiculo { Id = sqlDataReader.GetInt32(2), Placa = placa },
-                        DataDeEntrada = sqlDataReader.GetDateTime(3),
-                        DataDeSaida = sqlDataReader.GetDateTime(4),
-                        UsuarioEntrada = new Usuario { Id = sqlDataReader.GetInt32(5) },
-                        UsuarioSaida = new Usuario { Id = sqlDataReader.GetInt32(6) },
-                        Valor = sqlDataReader.GetDecimal(7),
-                        CustoHora = sqlDataReader.GetDecimal(9)
-                    };
+
+                        if (!sqlDataReader.IsDBNull(0))
+                        {
+                            registro = new Registro
+                            {
+                                Id = sqlDataReader.GetInt32(0),
+                                Estacionamento = new Estacionamento { Id = sqlDataReader.GetInt32(1) },
+                                Veiculo = new Veiculo { Id = sqlDataReader.GetInt32(2), Placa = placa },
+                                DataDeEntrada = sqlDataReader.GetDateTime(3),
+                                UsuarioEntrada = new Usuario { Id = sqlDataReader.GetInt32(5) },
+                                CustoHora = sqlDataReader.GetDecimal(10)
+                                //DataDeSaida = VerificaIsNull(sqlDataReader.GetDateTime(4)),
+                                //UsuarioSaida = new Usuario { Id = sqlDataReader.GetInt32(6) },
+                                //Valor = sqlDataReader.GetDecimal(7),
+                            };
+                        }
+                    }
                 }
                 sqlDataReader.Close();
             }
