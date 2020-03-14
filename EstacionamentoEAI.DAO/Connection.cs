@@ -30,8 +30,6 @@ namespace EstacionamentoEAI.DAO
         public void Dispose()
         {
             this.FecharConexao();
-            this.Dispose();
-            
             GC.SuppressFinalize(this);
         }
 

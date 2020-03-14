@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace EstacionamentoEAI.DAO.Interfaces
 {
-    interface IConnection
+    public interface IConnection:IDisposable
     {
         SqlConnection AbrirConexao();
 

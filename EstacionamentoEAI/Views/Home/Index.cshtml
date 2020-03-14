@@ -2,21 +2,21 @@
     ViewBag.Title = "Estacionamento EAI Brasil";
 }
 
-<div class="jumbotron">
-    <h1>Estacionamento EAI</h1>
-</div>
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Acesse com sua conta para iniciar o sistema</h2>
+    <div class="col-md">
+        <h2>Acesse uma opção abaixo para acessar o sistema</h2>
+        <br />
         <p>
-            funcionario@eaibrasil.local  ( Acesso operacional )
+            <h2>@Html.ActionLink("Acesso Operacional", "Index", "Estacionamento") </h2>
         </p>
         <p>
             ou
         </p>
         <p>
-            coordenador@eaibrasil.local  ( Acesso gerencial )
+            <h2>@Html.ActionLink("Acesso Gerencial", "Index", "Estacionamento")</h2>
         </p>
+        <br />
+        <br />
     </div>
 </div>

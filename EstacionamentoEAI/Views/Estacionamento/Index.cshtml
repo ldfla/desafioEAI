@@ -1,0 +1,61 @@
+﻿@model List<EstacionamentoEAI.Definition.Marca>
+@{
+    ViewBag.Title = "Estacionamento EAI";
+}
+    <h3>
+        <br />
+        Controle de Veículos
+    </h3>
+    <p>
+        Total de Vagas : <strong>@ViewBag.VagasTotal </strong><br />
+        Vagas Ocupadas : <strong>@ViewBag.VagasOcupadas</strong>
+    </p>
+<br />
+<br />
+
+    <form method="post">
+        <div class="form-group row">
+            <label for="placaVeiculo" class="col-6 col-form-label">Placa</label>
+            <div class="col-6">
+                <input id="placaVeiculo" name="placaVeiculo" placeholder="Placa" type="text" required="required" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="marcaVeiculo" class="col-6 col-form-label">Marca</label>
+            <div class="col-6">
+                <select id="marcaVeiculo" name="marcaVeiculo" class="form-control">
+                    <option value="">Selecione uma Marca</option>
+                    @foreach (var item in ViewData["Marca"] as IEnumerable<EstacionamentoEAI.Definition.Marca>)
+                    {
+                        <option value="@item.Id">@item.Nome</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label for="modeloVeiculo" class="col-6 col-form-label">Modelo</label>
+            <div class="col-6">
+                <input id="modeloVeiculo" name="modeloVeiculo" placeholder="Modelo do Veiculo" type="text" class="form-control">                
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="nomeCliente" class="col-6 col-form-label">Cliente</label>
+            <div class="col-6">
+                <input id="nomeCliente" name="nomeCliente" placeholder="Nome do Cliente" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="observacaoVeiculo" class="col-6 col-form-label">Observação</label>
+            <div class="col-6">
+                <textarea id="observacaoVeiculo" name="observacaoVeiculo" cols="40" rows="5" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-12">
+                <button type="submit" name="controle_btn" value="entrada" class="btn btn-primary">Entrada</button>
+                <button type="submit" name="controle_btn" value="saida" class="btn btn-primary">Saída</button>
+            </div>
+        </div>
+    </form>
+    <br /><br /><br /><br /><br /><br />
+    

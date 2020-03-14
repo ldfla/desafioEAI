@@ -1,0 +1,499 @@
+﻿USE [master]
+GO
+/****** Object:  Database [EstacionamentoEAI]    Script Date: 14/03/2020 00:01:55 ******/
+CREATE DATABASE [EstacionamentoEAI] ON  PRIMARY 
+( NAME = N'eaibrasil', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\eaibrasil.mdf' , SIZE = 2048KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
+ LOG ON 
+( NAME = N'eaibrasil_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\eaibrasil_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
+GO
+ALTER DATABASE [EstacionamentoEAI] SET COMPATIBILITY_LEVEL = 100
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [EstacionamentoEAI].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [EstacionamentoEAI] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET RECOVERY FULL 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET  MULTI_USER 
+GO
+ALTER DATABASE [EstacionamentoEAI] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [EstacionamentoEAI] SET DB_CHAINING OFF 
+GO
+USE [EstacionamentoEAI]
+GO
+/****** Object:  Table [dbo].[Clientes]    Script Date: 14/03/2020 00:01:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Clientes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Nome] [nvarchar](250) NOT NULL,
+	[Endereco] [nvarchar](250) NOT NULL,
+	[Documento] [nvarchar](50) NOT NULL,
+	[Telefone] [nvarchar](50) NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Estacionamentos]    Script Date: 14/03/2020 00:01:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Estacionamentos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Nome] [nvarchar](250) NOT NULL,
+	[Endereco] [nvarchar](250) NOT NULL,
+	[Responsavel] [nvarchar](250) NOT NULL,
+	[Telefone] [nvarchar](50) NULL,
+	[NumeroVagas] [int] NOT NULL,
+	[CustoHora] [money] NOT NULL,
+	[Manager] [int] NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Marca]    Script Date: 14/03/2020 00:01:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Marca](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[Nome] [nvarchar](250) NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Modelos]    Script Date: 14/03/2020 00:01:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Modelos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Nome] [nvarchar](250) NOT NULL,
+	[Marca] [int] NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Registros]    Script Date: 14/03/2020 00:01:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Registros](
+	[Id] [int] NOT NULL,
+	[Estacionamento] [int] NOT NULL,
+	[Veiculo] [int] NOT NULL,
+	[DataDeEntrada] [datetime] NOT NULL,
+	[DataDeSaida] [datetime] NULL,
+	[UsuarioEntrada] [int] NOT NULL,
+	[UsuarioSaida] [int] NULL,
+	[Valor] [money] NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Usuarios]    Script Date: 14/03/2020 00:01:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Usuarios](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Login] [nvarchar](50) NOT NULL,
+	[Nome] [nvarchar](250) NOT NULL,
+	[Email] [nvarchar](250) NOT NULL,
+	[Password] [nvarchar](50) NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Veiculo]    Script Date: 14/03/2020 00:01:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Veiculo](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Placa] [nvarchar](10) NOT NULL,
+	[Modelo] [int] NOT NULL,
+	[Observacao] [nvarchar](250) NULL,
+	[Cliente] [int] NULL
+) ON [PRIMARY]
+GO
+USE [master]
+GO
+ALTER DATABASE [EstacionamentoEAI] SET  READ_WRITE 
+GO
+
+
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Acura')  
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Agrale') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Alfa Romeo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Asia') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('AM General') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Aston Martin') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Audi') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Adly') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Aprilia') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Atala')  
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Amazonas') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Austin') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Apperson') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ashok Leyland') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Alpina') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Adler') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ascari') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Abarth') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Autobianchi') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Aixam') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('AMG') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('AZLK') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Avtokam') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('ACMAT') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Albion') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Argyle') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Askam') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Aspark Owl') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('A.D. Tramontana') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('BMW') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Buggy') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('BRM') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Bugre') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Bugatti') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Bentley') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Buick') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Baker') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Biddle') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Bajaj') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Bitter') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Borgward') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Briggs') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Belsize') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Bertone') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Bianchi') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Brilliance') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Byd Auto') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Baic') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Birrana') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Brabus') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Birkin') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Bailey') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Chevrolet') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Cadillac') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('CBT') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Chana') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Changan') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Chery') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Chrysler') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Citroen') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Cross Lander') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Chinkara') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Caterham') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Chater-Lea') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Covini') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Caresto') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Changhe') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Cizeta') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Daewoo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Daihatsu') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Dodge') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('De Tomaso') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ducati') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Delorean') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('DKW') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('DR Motor') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('De La Chapelle') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Dongfeng') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('DRB') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Derways') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Dragon Motors') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Daimler') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Datsun') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Dacia') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('DoniRosset') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Effa') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Engesa') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Envemo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Eicher') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Esther') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Elfin') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Eagle') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Eterniti') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('ERF') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Elva') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ferrari') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('FIAT') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Fibravan') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ford') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Foton') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Fyber') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Force') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Fornasari') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Fisker') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Freightliner') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Faw') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('FPV') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Facel Vega') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Fioravanti') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Franklin') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Geely') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('GM') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Great Wall') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Gurgel') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('GMC') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Gorhan') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Gumpert') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ginetta') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Geo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('GAC') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Giocattolo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Gaz') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Genesis') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Gillet') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Grinnall') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Hafei') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Honda') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Hyunday') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Harley-Davidson') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Husqvarna') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Hummer') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Hindustan') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Hongqi') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Holden') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('HSV') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Hino') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Harper') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Hero Motors') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Isuzu') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Iveco') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('ICML Motors') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Infiniti') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Isdera') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Invicta') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Isotta Fraschini') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Irizar') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Innoson') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ivema') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Jeep') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Jaguar') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('JPX') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Jinbei') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('JAC') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('James & Browne') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Josse Car') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Jiefang') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Kia') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Kahena') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Kasinski') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('KTM') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Keinath') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Koenigsegg') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Kamaz') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Kawasaki') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Karma') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Kaz') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Karrier') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Kantanka') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Kiira') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lada') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lamborghini') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lancia') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Land Rover') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lexus') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lifan') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lotus') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lobini') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lincoln') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Laferrari') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ligier') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lagonda') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Lucid') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Luxgen') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Laraki') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mahindra') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Maserati') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Matra') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('MG') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mazda') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mclaren') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mercedes-Benz') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mercury') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Miura') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mini') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mitsubishi') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Maruti') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mitsuoka') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Maybach') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Microcar') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mack') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Moskvich') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Marussia') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('MAN') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Marcos') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mazzanti') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Morris') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mustang') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('MAZ') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Mobius') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Nissan') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Navistar') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Nota') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Nami Okhta') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Noble') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Opel') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Oldsmobile') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ohta Jidosha') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Otosan') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('ÖAF') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Peugeot') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Plymouth') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Pontiac') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Porsche') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Puma') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Polaris') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Panoz') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Premier') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Prince') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Pagani') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Panhard') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('PGO') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Pyeonghwa') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Proto') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Perodua') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Paccar') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Pininfarina') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Paramount Automotive') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Proforce') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Perana') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Qvale') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Qoros') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('RAM') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Rely') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Rover') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Renault') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Rolls-Royce') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Rootes') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Rambler') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Riley') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Rossion') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('RUF') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ronart') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Rimac') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('SAAB') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Saturn') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('SEAT') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Shineray') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Smart') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ssangyong') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Subaru') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Suzuki') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Sundown') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Sino Truck') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Scania') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Scion') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Saic') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Spetsteh') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Skoda') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Shelby') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Saleen') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Sterling') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Saroukh El-jamahiriya') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Shaka Nynya') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('TAC') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Toyota') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Troller') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Tata') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Triumph') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Traxx') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Tesla') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Tatra') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Trion') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('The Turtle') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Tropical') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('UAZ') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Unimog') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('UEV') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Ultima') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Uri') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('URO') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Volvo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Volkswagen') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Venturi') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Volga') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Vauxhall') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Vector') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Venucia') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Vulcan') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Vomag') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Vanaja') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Wake') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Walk') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Wuyang') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Wheego') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Willeme') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Wallys') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Xbasiralsanayei') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('XBehnam') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Yamaha') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Yale') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Yuna') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Yugo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Yulon') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Yarovit') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Yorkshire') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zimmer') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zyle Daewoo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zotye') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zil') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zastava') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zolfe') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zenvo') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zender') 
+INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Zwicky') 
+GO
+
+INSERT INTO [dbo].[Usuarios] ([Login],[Nome],[Email],[Password]) VALUES ('funcionarioeai', 'Funcionario', 'funcionario@eaibrasil.local', 'abc1234')
+INSERT INTO [dbo].[Usuarios] ([Login],[Nome],[Email],[Password]) VALUES ('gerenteeai', 'Gerente', 'gerente@eaibrasil.local', 'abc1234')
+GO
+
+INSERT INTO [dbo].[Estacionamentos] ([Nome],[Endereco],[Responsavel],[Telefone],[NumeroVagas],[CustoHora],[Manager]) VALUES ('Estacionamento EAI', 'R. Manuel da Nóbrega, 211', 'Marcelo/Felipe', '00 0000-0000', 100, 10.00, 2)
+GO

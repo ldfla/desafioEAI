@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace EstacionamentoEAI.DAO.Interfaces
 {
-    interface IDAO<T>:IDisposable 
+    public interface IDAO<T>:IDisposable 
         where T: class, new()
     {
         /// <summary>
@@ -43,6 +43,6 @@ namespace EstacionamentoEAI.DAO.Interfaces
         /// Metodo para recuperar todos os items de um objeto <T>
         /// </summary>
         /// <returns></returns>
-        Collection<T> ListarItens();
+        List<T> ListarItens();
     }
 }
