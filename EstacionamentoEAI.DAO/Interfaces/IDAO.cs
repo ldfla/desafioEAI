@@ -26,13 +26,6 @@ namespace EstacionamentoEAI.DAO.Interfaces
         bool Atualizar(T model);
 
         /// <summary>
-        /// Metodo para remover um item do banco de dados
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        bool Remover(T model);
-
-        /// <summary>
         /// Metodo para realizar buscar no banco de dados a partir de um parametro
         /// </summary>
         /// <param name="objeto"></param>

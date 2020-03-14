@@ -12,5 +12,6 @@ namespace EstacionamentoEAI.Definition
         public DateTime DataDeSaida { get; set; }
         public Usuario UsuarioSaida { get; set; }
         public Decimal Valor { get; set; }
+        public Decimal CustoHora { get; set; }
     }
 }

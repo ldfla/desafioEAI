@@ -27,27 +27,61 @@ namespace EstacionamentoEAI.DAO
 
         public Veiculo BuscarItem(params object[] objeto)
         {
-            throw new NotImplementedException();
+            Veiculo veiculo = null;
+            using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
+            {
+                //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL. Sem uso de SP
+                sqlCommand.CommandType = System.Data.CommandType.Text;
+
+                string selectQuery = string.Empty;
+                string placa = string.Empty;
+                switch (objeto[0].ToString())
+                {
+                    case "placa":
+                        placa = objeto[1].ToString();
+                        selectQuery = "SELECT ID, Placa, Modelo, Observacao, Cliente FROM Veiculo WHERE Placa = @placa";
+                        sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = placa;
+                        break;
+                    default:
+                        return veiculo;
+                }
+                sqlCommand.CommandText = selectQuery;
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                if (sqlDataReader.HasRows)
+                {
+                    sqlDataReader.Read();
+                    veiculo = new Veiculo
+                    {
+                        Id = sqlDataReader.GetInt32(0),
+                        Placa = sqlDataReader.GetString(1),
+                        Modelo = new Modelo { Id = sqlDataReader.GetInt32(2) },
+                        Observacao = sqlDataReader.GetString(3),
+                        Cliente = new Cliente { Id = sqlDataReader.GetInt32(4) }
+                    };
+                }
+                sqlDataReader.Close();
+            }
+            return veiculo;
         }
 
         public Veiculo Inserir(Veiculo model)
         {
-                using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
-                {
-                    //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL. Sem uso de SP
-                    sqlCommand.CommandType = System.Data.CommandType.Text;
-                    sqlCommand.CommandText = "INSERT into Veiculos (Placa, Modelo, Observacao, Cliente) VALUES (@placa, @modelo, @observacao, @cliente) SELECT SCOPE_IDENTITY()";
-                
-                    //Adiciona os parametros de Inserção. 
-                    sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = model.Placa;
-                    sqlCommand.Parameters.Add("@modelo", SqlDbType.Int).Value = model.Modelo;
-                    sqlCommand.Parameters.Add("@observacao", SqlDbType.NVarChar).Value = model.Observacao;
-                    sqlCommand.Parameters.Add("@cliente", SqlDbType.Int).Value = model.Cliente;
+            using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
+            {
+                //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL. Sem uso de SP
+                sqlCommand.CommandType = System.Data.CommandType.Text;
+                sqlCommand.CommandText = "INSERT into Veiculo (Placa, Modelo, Observacao, Cliente) VALUES (@placa, @modelo, @observacao, @cliente) SELECT SCOPE_IDENTITY()";
 
-                    //Executa a Query e retorna o ID do veiculo adicionado
-                    model.Id = int.Parse(sqlCommand.ExecuteScalar().ToString());
-                }
-                return model;
+                //Adiciona os parametros de Inserção. 
+                sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = model.Placa;
+                sqlCommand.Parameters.Add("@modelo", SqlDbType.Int).Value = model.Modelo.Id;
+                sqlCommand.Parameters.Add("@observacao", SqlDbType.NVarChar).Value = model.Observacao;
+                sqlCommand.Parameters.Add("@cliente", SqlDbType.Int).Value = model.Cliente.Id;
+
+                //Executa a Query e retorna o ID do veiculo adicionado
+                model.Id = int.Parse(sqlCommand.ExecuteScalar().ToString());
+            }
+            return model;
         }
 
         public bool Remover(Veiculo model)

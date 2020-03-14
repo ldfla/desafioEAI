@@ -38,14 +38,36 @@ namespace EstacionamentoEAI.Controllers
         public ActionResult Index(FormCollection formCollection)
         {
             string action = formCollection["controle_btn"];
+            string placa = formCollection["placaVeiculo"].ToUpper();
+            int modelo = int.Parse(formCollection["modeloVeiculo"]);
+            string observacao = formCollection["observacaoVeiculo"];
+
+            switch (action)
+            {
+                case "entrada":
+                    Veiculo veiculo = new Veiculo
+                    {
+                        Placa = placa,
+                        Modelo = new Modelo { Id = modelo },
+                        Observacao = observacao
+                    };
+                    if (RegistraEntrada(veiculo) > 0)
+                    {
+                        RedirectToAction("Index");
+                    }
+                    else {
+                        return View();
+                    }
+                    break;
+                case "saida":
+                    break;
+                default:
+                    break;
+            }
             if (action == "entrada")
             {
 
-                RegistraEntrada(new Veiculo { 
-                    Placa = formCollection["placaVeiculo"],
-                    Modelo = new Modelo { Id = int.Parse(formCollection["modeloVeiculo"]) },
-                    Observacao = formCollection["observacaoVeiculo"]
-                });
+                
             }
         
             return RedirectToAction("Index");
@@ -60,35 +82,64 @@ namespace EstacionamentoEAI.Controllers
             int registroId = 0;
             using (IConnection conn = new Connection())
             {
-                conn.AbrirConexao();
+                IDAO<Veiculo> veiculoDAO = new VeiculoDAO(conn);
+                //Verifica se o Veiculo já existe no DB
+                Veiculo verificaVeiculo = veiculoDAO.BuscarItem("placa", veiculo.Placa);
 
-                Registro registro = new Registro
+                if (verificaVeiculo == null)
                 {
-                    DataDeEntrada = DateTime.Now,
-                    Estacionamento = estacionamento,
-                    UsuarioEntrada = AutenticaFuncionarioFake(),
-                    Veiculo = veiculo,
-                };
-                
+                    veiculo = veiculoDAO.Inserir(veiculo);
+                } else
+                {
+                    veiculo = verificaVeiculo;
+                }
+
                 IDAO<Registro> registroDAO = new RegistroDAO(conn);
-                Registro novoRegistro = registroDAO.Inserir(registro);
-                registroId = novoRegistro.Id;
+                //Verifica se o Veiculo já está estacionado 
+                Registro registro = registroDAO.BuscarItem("placa", veiculo.Placa);
+
+                if (registro == null)
+                {
+                    registro = new Registro
+                    {
+                        DataDeEntrada = DateTime.Now,
+                        Estacionamento = estacionamento,
+                        UsuarioEntrada = AutenticaFuncionarioFake(),
+                        Veiculo = veiculo,
+                    };
+
+                    Registro novoRegistro = registroDAO.Inserir(registro);
+                    registroId = novoRegistro.Id;
+                }
+                conn.FecharConexao();
             }
             return registroId;
         }
 
-        public void RegistraSaida(Veiculo veiculo)
+        public bool RegistraSaida(string placa)
         {
+            bool atualizado = false;
+
             using (IConnection conn = new Connection())
             {
-                Registro registro = new Registro
+                IDAO<Registro> registroDAO = new RegistroDAO(conn);
+                Registro registro = registroDAO.BuscarItem(placa);
+
+                if (registro.DataDeSaida == null)
                 {
-                    DataDeSaida = DateTime.Now,
-                    Estacionamento = estacionamento,
-                    UsuarioEntrada = AutenticaFuncionarioFake(),
-                    Veiculo = veiculo,
-                };
+                    registro.DataDeSaida = DateTime.Now;
+                    registro.UsuarioSaida = AutenticaFuncionarioFake();
+                    TimeSpan timeSpan = registro.DataDeSaida - registro.DataDeEntrada;
+                    int horas = Convert.ToInt32(Math.Ceiling(timeSpan.TotalHours));
+                    registro.Valor = horas * registro.CustoHora;
+                }
+
+                atualizado = registroDAO.Atualizar(registro);
+
+                conn.FecharConexao();
             }
+
+            return atualizado;
         }
 
         public Usuario AutenticaFuncionarioFake()

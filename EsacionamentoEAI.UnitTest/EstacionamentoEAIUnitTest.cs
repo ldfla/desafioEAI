@@ -7,15 +7,15 @@ using System.Data.SqlClient;
 using System.Data;
 using EstacionamentoEAI.Definition;
 using System.Web.Mvc;
-
-
-
+using EstacionamentoEAI.DAO.Interfaces;
 
 namespace EstacionamentoEAI.UnitTest
 {
     [TestClass]
     public class EstacionamentoEAIUnitTest
     {
+        IConnection conn = new Connection();
+
         [TestMethod]
         public void VerificaAbrirBancoDeDados()
         {
@@ -66,7 +66,7 @@ namespace EstacionamentoEAI.UnitTest
         {
             Veiculo veiculo = new Veiculo
             {
-                Cliente = null,
+                Cliente = new Cliente(),
                 Modelo = new Modelo { Id = 1 },
                 Observacao = "",
                 Placa = "AAA-0000"
@@ -80,6 +80,17 @@ namespace EstacionamentoEAI.UnitTest
         [TestMethod]
         public void RegistrarSaidaVeiculo()
         {
+            Veiculo veiculo = new Veiculo
+            {
+                Cliente = null,
+                Modelo = new Modelo { Id = 1 },
+                Observacao = "",
+                Placa = "AAA-0000"
+            };
+            var controller = new EstacionamentoController();
+
+            bool atualizado = controller.RegistraSaida("AAA-0000");
+            Assert.IsTrue(atualizado);
         }
 
         [TestMethod]
@@ -90,6 +101,19 @@ namespace EstacionamentoEAI.UnitTest
         [TestMethod]
         public void CadastrarVeiculo()
         {
+            Veiculo veiculo = new Veiculo { Placa = "AAA-0000",
+                Modelo = new Modelo {
+                    Id = 1,
+                    Nome = "TLX",
+                    Marca = new Marca { Id = 1 }
+                },
+                Observacao = "",
+                Cliente = new Cliente()
+            };
+
+            VeiculoDAO veiculoDAO = new VeiculoDAO(conn);
+            veiculo = veiculoDAO.Inserir(veiculo);
+            Assert.AreNotEqual(0, veiculo.Id);
         }
 
         [TestMethod]
