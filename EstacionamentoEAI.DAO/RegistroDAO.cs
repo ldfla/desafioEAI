@@ -46,7 +46,7 @@ namespace EstacionamentoEAI.DAO
                     sqlCommand.ExecuteNonQuery();
                 }
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
                 //Se houver erro na atualização, retorna false
                 return false;
@@ -162,10 +162,6 @@ namespace EstacionamentoEAI.DAO
             return model;
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
 
         public List<Registro> ListarVagasOcupadas(int estacionamentoId)
         {
@@ -177,8 +173,8 @@ namespace EstacionamentoEAI.DAO
                 sqlCommand.CommandType = System.Data.CommandType.Text;
                 sqlCommand.CommandText = "SELECT Registros.Id, Modelos.Nome, Modelos.Id, Veiculo.Placa, Veiculo.ID, Registros.Estacionamento," +
                                          " Registros.DataDeEntrada, Registros.UsuarioEntrada, Estacionamentos.CustoHora" +
-                                         " FROM Veiculo" + 
-                                         " INNER JOIN Registros ON Veiculo.Id = Registros.Veiculo" + 
+                                         " FROM Veiculo" +
+                                         " INNER JOIN Registros ON Veiculo.Id = Registros.Veiculo" +
                                          " INNER JOIN Modelos ON Veiculo.Modelo = Modelos.Id" +
                                          " INNER JOIN Estacionamentos ON Registros.Estacionamento = Estacionamentos.Id" +
                                          " WHERE(Registros.Estacionamento = @estacionamentoId and Registros.DataDeSaida IS NULL)";
@@ -214,8 +210,8 @@ namespace EstacionamentoEAI.DAO
                                 Id = sqlDataReader.GetInt32(5),
                                 CustoHora = sqlDataReader.GetDecimal(8)
                             }
-                    });
-                    }                                        
+                        });
+                    }
                 }
                 sqlDataReader.Close();
             }
@@ -249,6 +245,23 @@ namespace EstacionamentoEAI.DAO
         public List<Registro> ListarItens()
         {
             throw new NotImplementedException();
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_conn != null)
+                {
+                    _conn.Dispose();
+                    _conn = null;
+                }
+            }
+            //Ref: https://docs.microsoft.com/pt-br/visualstudio/code-quality/ca1816-call-gc-suppressfinalize-correctly?view=vs-2015
         }
     }
 }

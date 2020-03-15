@@ -68,11 +68,6 @@ namespace EstacionamentoEAI.DAO
             return usuario;
         }
 
-        public void Dispose()
-        {
-            this.Dispose();
-            GC.SuppressFinalize(this);
-        }
 
         public Usuario Inserir(Usuario model)
         {
@@ -87,6 +82,25 @@ namespace EstacionamentoEAI.DAO
         public List<Usuario> ListarItens()
         {
             throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_conn != null)
+                {
+                    _conn.Dispose();
+                    _conn = null;
+                }
+            }
+            //Ref: https://docs.microsoft.com/pt-br/visualstudio/code-quality/ca1816-call-gc-suppressfinalize-correctly?view=vs-2015
         }
     }
 }

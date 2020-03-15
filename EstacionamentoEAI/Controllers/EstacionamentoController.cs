@@ -70,7 +70,6 @@ namespace EstacionamentoEAI.Controllers
                     {
                         return RedirectToAction("ErroSaida", new { placa = placa });
                     }
-                    break;
                 default:
                     return View();
             }
@@ -120,7 +119,9 @@ namespace EstacionamentoEAI.Controllers
         /// </summary>
         /// <param name="marca"></param>
         /// <returns>Lista no formato Json</returns>
-        [HttpPost]              
+        [HttpPost]
+
+
         public JsonResult ListaModelos(int marca)
         {
             List<Modelo> ModeloList = ListaModelosPorMarca(marca);

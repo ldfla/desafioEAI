@@ -19,6 +19,7 @@
                     @Html.ActionLink("Estacionamento EAI", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
                     @Html.ActionLink("Administração", "Index", "Gerencia", new object { }, new { @class = "nav-link" })
                     @Html.ActionLink("Carros Estacionados", "CarrosEstacionados", "Gerencia", new object { }, new { @class = "nav-link" })
+                    @Html.ActionLink("Relatórios", "Relatorios", "Gerencia", new object { }, new { @class = "nav-link" })
                     @Html.ActionLink("Sobre", "About", "Home", new object { }, new { @class = "nav-link" })
                     @Html.ActionLink("Contato", "Contact", "Home", new object { }, new { @class = "nav-link" })
                 </nav>
@@ -30,7 +31,7 @@
             @RenderBody()
         </main>
 
-        <footer class="mastfoot mt-auto">
+        <footer class="footer">
             <div class="inner">
                 <p>&copy; @DateTime.Now.Year - Estacionamento EAI Brasil.</p>
             </div>

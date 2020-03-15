@@ -91,7 +91,22 @@ namespace EstacionamentoEAI.DAO
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_conn != null)
+                {
+                    _conn.Dispose();
+                    _conn = null;
+                }
+            }
+            //Ref: https://docs.microsoft.com/pt-br/visualstudio/code-quality/ca1816-call-gc-suppressfinalize-correctly?view=vs-2015
         }
 
         public List<Veiculo> ListarItens()
