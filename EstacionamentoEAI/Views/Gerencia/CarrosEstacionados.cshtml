@@ -1,0 +1,52 @@
+﻿@model IEnumerable<EstacionamentoEAI.Definition.Registro>
+
+@{
+    Layout = "~/Views/Shared/_LayoutGerencia.cshtml";
+    ViewBag.Title = "Carros Estacionados no Momento";
+}
+<p>
+    <h2>Lista de Carros Estacionados no Momento</h2>
+    <br />
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            Placa do Veículo
+        </th>
+        <th>
+            Modelo do Veículo
+        </th>
+        <th>
+            Data e Hora de Entrada
+        </th>
+        <th>
+            Valor Estimado
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Veiculo.Placa, "Historico", "Gerencia", routeValues: new { placa = item.Veiculo.Placa }, htmlAttributes: null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Veiculo.Modelo.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataDeEntrada)
+            </td>
+            <td>
+                @{
+                    TimeSpan timeSpan = (DateTime.Now - item.DataDeEntrada);
+                    int horasParado = Convert.ToInt32(Math.Ceiling(timeSpan.TotalHours));
+                    decimal valorEstimado = item.Estacionamento.CustoHora * horasParado;
+                }
+                @Html.Raw(valorEstimado)
+            </td>
+        </tr>
+    }
+
+</table>
+<br />

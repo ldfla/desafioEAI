@@ -49,6 +49,7 @@
     <Compile Include="EstacionamentoDAO.cs" />
     <Compile Include="Interfaces\IDAO.cs" />
     <Compile Include="MarcaDAO.cs" />
+    <Compile Include="ModeloDAO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Interfaces\IConnection.cs" />
     <Compile Include="RegistroDAO.cs" />

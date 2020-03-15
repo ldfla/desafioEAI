@@ -8,6 +8,7 @@ using System.Data;
 using EstacionamentoEAI.Definition;
 using System.Web.Mvc;
 using EstacionamentoEAI.DAO.Interfaces;
+using System.Collections.Generic;
 
 namespace EstacionamentoEAI.UnitTest
 {
@@ -72,21 +73,21 @@ namespace EstacionamentoEAI.UnitTest
                 Placa = "AAA-0000"
             };
             var controller = new EstacionamentoController();
-
-            int Id = controller.RegistraEntrada(veiculo);
+            FormCollection formCollection = new FormCollection {
+                { "placaVeiculo","AAA-0000" },
+                { "modeloVeiculo","1" },
+                { "observacaoVeiculo","" },
+                { "nomeCliente","" }
+            };
+            
+            int Id = controller.RegistraEntrada(formCollection);
             Assert.AreNotEqual(0, Id);
         }
 
         [TestMethod]
         public void RegistrarSaidaVeiculo()
         {
-            Veiculo veiculo = new Veiculo
-            {
-                Cliente = null,
-                Modelo = new Modelo { Id = 1 },
-                Observacao = "",
-                Placa = "AAA-0000"
-            };
+
             var controller = new EstacionamentoController();
 
             bool atualizado = controller.RegistraSaida("AAA-0000");
@@ -115,6 +116,15 @@ namespace EstacionamentoEAI.UnitTest
             veiculo = veiculoDAO.Inserir(veiculo);
             Assert.AreNotEqual(0, veiculo.Id);
         }
+        
+        [TestMethod]
+        public void ListarModelos()
+        {
+            ModeloDAO modeloDAO = new ModeloDAO(conn);
+            List<Modelo> listModelos = modeloDAO.ListarItens(1);
+            Assert.AreNotEqual(0, listModelos.Count);
+        }
+
 
         [TestMethod]
         public void AdicionarMarca()
@@ -124,11 +134,7 @@ namespace EstacionamentoEAI.UnitTest
         public void AdicionarModeloVeiculo()
         {
         }
-        [TestMethod]
-        public void AdicionarCorVeiculo()
-        {
-        }
-
+        
 
         [TestMethod]
         public void GerarRelatorio()

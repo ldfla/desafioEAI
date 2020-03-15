@@ -272,10 +272,14 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Estacionamento\Estacionado.cshtml" />
+    <Content Include="Views\Estacionamento\Saida.cshtml" />
+    <Content Include="Views\Gerencia\Index.cshtml" />
+    <Content Include="Views\Gerencia\CarrosEstacionados.cshtml" />
+    <Content Include="Views\Gerencia\Historico.cshtml" />
+    <Content Include="Views\Shared\_LayoutGerencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Gerencia\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

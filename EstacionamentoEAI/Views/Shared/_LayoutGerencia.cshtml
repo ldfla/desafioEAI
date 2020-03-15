@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+<body class="text-center">
+
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+        <header class="masthead mb-auto">
+            <div class="inner">
+                <nav class="nav nav-masthead justify-content-center">
+                    @Html.ActionLink("Estacionamento EAI", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                    @Html.ActionLink("Administração", "Index", "Gerencia", new object { }, new { @class = "nav-link" })
+                    @Html.ActionLink("Carros Estacionados", "CarrosEstacionados", "Gerencia", new object { }, new { @class = "nav-link" })
+                    @Html.ActionLink("Sobre", "About", "Home", new object { }, new { @class = "nav-link" })
+                    @Html.ActionLink("Contato", "Contact", "Home", new object { }, new { @class = "nav-link" })
+                </nav>
+            </div>
+
+        </header>
+
+        <main role="main" class="inner cover">
+            @RenderBody()
+        </main>
+
+        <footer class="mastfoot mt-auto">
+            <div class="inner">
+                <p>&copy; @DateTime.Now.Year - Estacionamento EAI Brasil.</p>
+            </div>
+        </footer>
+    </div>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

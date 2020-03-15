@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Text.RegularExpressions;
 
 namespace EstacionamentoEAI.Controllers
 {
@@ -14,85 +15,53 @@ namespace EstacionamentoEAI.Controllers
     {
 
         IConnection conn = new Connection();
+        Estacionamento estacionamento = new Estacionamento();
 
 
-        // GET: Gerencia
+        /// <summary>
+        /// Index do Estacionamento. Versão Gerencial
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
+            EstacionamentoDAO estacionamentoDAO = new EstacionamentoDAO(conn);
+            estacionamento = estacionamentoDAO.BuscarItem("vagas");
+            RegistroDAO registroDAO = new RegistroDAO(conn);
+            int vagasOcupadas = registroDAO.ContaVagasOcupadas(estacionamento.Id);
+
+            ViewBag.VagasTotal = estacionamento.NumeroDeVagas;
+            ViewBag.VagasOcupadas = vagasOcupadas;
+            ViewBag.VagasDisponiveis = estacionamento.NumeroDeVagas - vagasOcupadas;
+            ViewBag.Estacionamento = estacionamento.Endereco;
             return View();
         }
 
-        // GET: Gerencia/Details/5
-        public ActionResult Details(int id)
+        public ActionResult CarrosEstacionados()
         {
+            RegistroDAO registroDAO = new RegistroDAO(conn);
+            List<Registro> registros = registroDAO.ListarVagasOcupadas(1);
+
+            ViewData.Model = registros;
+
             return View();
         }
 
-        // GET: Gerencia/Create
-        public ActionResult Create()
+        public ActionResult Historico(string placa)
         {
-            return View();
-        }
-
-        // POST: Gerencia/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
+            //Regex para as placas AAA-0000, AAA0000 e AAA0A00
+            string padraoBrasilMercosul = @"([A-Z]{3}\-?[0-9]([0-9]|[A-Z])[0-9]{2})";
+            
+            if (Regex.IsMatch(placa, padraoBrasilMercosul, RegexOptions.IgnoreCase))
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
+                ViewBag.Placa = placa.ToUpper();
                 return View();
             }
-        }
-
-        // GET: Gerencia/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Gerencia/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
+            else
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
+                return RedirectToAction("Index", "Gerencia");
             }
         }
 
-        // GET: Gerencia/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Gerencia/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
         #region private Methods
 
         public Usuario AutenticaGerenteFake()

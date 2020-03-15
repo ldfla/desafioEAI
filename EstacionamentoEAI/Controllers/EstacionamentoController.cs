@@ -9,17 +9,20 @@ using System.Web.Mvc;
 
 namespace EstacionamentoEAI.Controllers
 {
-   
+
     public class EstacionamentoController : Controller
     {
         IConnection conn = new Connection();
         Estacionamento estacionamento = new Estacionamento();
-        
-        // GET: Estacionamento
+
+        /// <summary>
+        /// Index do Estacionamento. Versão Operador
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Index()
         {
-            
+
             EstacionamentoDAO estacionamentoDAO = new EstacionamentoDAO(conn);
             estacionamento = estacionamentoDAO.BuscarItem("vagas");
             RegistroDAO registroDAO = new RegistroDAO(conn);
@@ -34,6 +37,11 @@ namespace EstacionamentoEAI.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Executa os POSTs de entrada ou saída de veículos
+        /// </summary>
+        /// <param name="formCollection"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Index(FormCollection formCollection)
         {
@@ -43,24 +51,38 @@ namespace EstacionamentoEAI.Controllers
             switch (action)
             {
                 case "entrada":
-                    
+
                     if (RegistraEntrada(formCollection) > 0)
                     {
                         RedirectToAction("Index");
                     }
-                    else {
+                    else
+                    {
                         return RedirectToAction("Estacionado", new { placa = placa });
                     }
                     break;
                 case "saida":
+                    if (RegistraSaida(placa))
+                    {
+                        return RedirectToAction("Saida", new { placa = placa });
+                    }
+                    else
+                    {
+                        return RedirectToAction("ErroSaida", new { placa = placa });
+                    }
                     break;
                 default:
-                    return View();                    
+                    return View();
             }
-                    
+
             return RedirectToAction("Index");
         }
-        
+
+        /// <summary>
+        /// Confirma a entrada do veículo no estacionamento
+        /// </summary>
+        /// <param name="placa"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Estacionado(string placa)
         {
@@ -68,20 +90,73 @@ namespace EstacionamentoEAI.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Mostra a razão que a saída do Veiculo não pode ser realizada
+        /// </summary>
+        /// <param name="placa"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult ErroSaida(string placa)
+        {
+            string razaoErroSaida = VerificaRazaoErroSaida(placa);
+            ViewBag.Placa = placa.ToUpper();
+            return View();
+        }
+
+        /// <summary>
+        /// Confirma a saída do veículo do estacionamento
+        /// </summary>
+        /// <param name="placa"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult Saida(string placa)
+        {
+            ViewBag.Placa = placa.ToUpper();
+            return View();
+        }
+
+        /// <summary>
+        /// Recupera os modelos pelo Id da Marca
+        /// </summary>
+        /// <param name="marca"></param>
+        /// <returns>Lista no formato Json</returns>
+        [HttpPost]              
+        public JsonResult ListaModelos(int marca)
+        {
+            List<Modelo> ModeloList = ListaModelosPorMarca(marca);
+            return Json(ModeloList, JsonRequestBehavior.AllowGet);
+        }
+
+       
 
         #region private Methods
+
+
+        private string VerificaRazaoErroSaida(string placa)
+        {
+            RegistroDAO registroDAO = new RegistroDAO(conn);
+            Registro registro = registroDAO.BuscarItem("placaSaida", placa);
+
+            if (registro == null)
+            {
+                return "Veículo Não Deu Entrada";
+            }
+
+            return $"Veículo já deu Saída às {registro.DataDeSaida.ToString("dd/MM/yyyy HH:mm:ss")}";
+        }
 
         public int RegistraEntrada(FormCollection formCollection)
         {
             string placa = formCollection["placaVeiculo"].ToUpper();
-            string cliente = formCollection["nomeCliente"].ToUpper();
+            string cliente = formCollection["nomeCliente"];
             int modelo = int.Parse(formCollection["modeloVeiculo"]);
             string observacao = formCollection["observacaoVeiculo"];
 
-            Veiculo veiculo = new Veiculo {
+            Veiculo veiculo = new Veiculo
+            {
                 Placa = placa,
                 Modelo = new Modelo { Id = modelo },
-                Observacao = observacao, 
+                Observacao = observacao,
                 Cliente = new Cliente()
             };
 
@@ -137,19 +212,20 @@ namespace EstacionamentoEAI.Controllers
 
             using (IConnection conn = new Connection())
             {
-                IDAO<Registro> registroDAO = new RegistroDAO(conn);
-                Registro registro = registroDAO.BuscarItem(placa);
+                RegistroDAO registroDAO = new RegistroDAO(conn);
+                Registro registro = registroDAO.BuscarItem("placa", placa);
 
-                if (registro.DataDeSaida == null)
+                if (registro.DataDeSaida == null || registro.DataDeSaida < registro.DataDeEntrada)
                 {
                     registro.DataDeSaida = DateTime.Now;
                     registro.UsuarioSaida = AutenticaFuncionarioFake();
                     TimeSpan timeSpan = registro.DataDeSaida - registro.DataDeEntrada;
                     int horas = Convert.ToInt32(Math.Ceiling(timeSpan.TotalHours));
                     registro.Valor = horas * registro.CustoHora;
-                } else
+                }
+                else
                 {
-                    conn.FecharConexao(); 
+                    conn.FecharConexao();
                     return atualizado;
                 }
 
@@ -165,6 +241,12 @@ namespace EstacionamentoEAI.Controllers
             return usuarioDAO.BuscarItem("funcionario");
         }
 
+        private List<Modelo> ListaModelosPorMarca(int marca)
+        {
+            ModeloDAO modeloDAO = new ModeloDAO(conn);
+            List<Modelo> modelos = modeloDAO.ListarItens(marca);
+            return modelos;
+        }
         #endregion
     }
 }

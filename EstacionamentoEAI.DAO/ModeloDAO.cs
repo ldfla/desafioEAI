@@ -10,21 +10,21 @@ using System.Threading.Tasks;
 
 namespace EstacionamentoEAI.DAO
 {
-    public class MarcaDAO : IDAO<Marca>, IDisposable
+    public class ModeloDAO : IDAO<Modelo>, IDisposable
     {
         private IConnection _conn;
 
-        public MarcaDAO(IConnection connection)
+        public ModeloDAO(IConnection connection)
         {
             this._conn = connection;
         }
 
-        public bool Atualizar(Marca model)
+        public bool Atualizar(Modelo model)
         {
             throw new NotImplementedException();
         }
 
-        public Marca BuscarItem(params object[] objeto)
+        public Modelo BuscarItem(params object[] objeto)
         {
             throw new NotImplementedException();
         }
@@ -34,45 +34,45 @@ namespace EstacionamentoEAI.DAO
             throw new NotImplementedException();
         }
 
-        public Marca Inserir(Marca model)
+        public Modelo Inserir(Modelo model)
         {
             throw new NotImplementedException();
         }
 
-
-        public bool Remover(Marca model)
+        public List<Modelo> ListarItens(int marca)
         {
-            throw new NotImplementedException();
-        }
-
-        public List<Marca> ListarItens()
-        {
-            List<Marca> listaDeMarcas = new List<Marca>();
-
+            List<Modelo> listaDeModelos = new List<Modelo>();
             using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
             {
                 //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL. Sem uso de SP
                 sqlCommand.CommandType = System.Data.CommandType.Text;
-                sqlCommand.CommandText = "SELECT Id, Nome FROM Marca";
-                                
+                sqlCommand.CommandText = "SELECT Id, Nome FROM Modelos WHERE Marca = @marca";
+
+                sqlCommand.Parameters.Add("@marca", System.Data.SqlDbType.Int).Value = marca;
+
                 SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
                 if (sqlDataReader.HasRows)
                 {
                     while (sqlDataReader.Read())
                     {
-                        Marca marca = new Marca
+                        Modelo modelo  = new Modelo
                         {
                             Id = sqlDataReader.GetInt32(0),
                             Nome = sqlDataReader.GetString(1)
                         };
 
-                        listaDeMarcas.Add(marca);
-                        
+                        listaDeModelos.Add(modelo);
+
                     }
                 }
                 sqlDataReader.Close();
             }
-            return listaDeMarcas;
+            return listaDeModelos;
+        }
+
+        public List<Modelo> ListarItens()
+        {
+            throw new NotImplementedException();
         }
     }
 }

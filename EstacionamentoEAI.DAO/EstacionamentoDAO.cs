@@ -28,34 +28,40 @@ namespace EstacionamentoEAI.DAO
         public Estacionamento BuscarItem(params object[] objeto)
         {
             Estacionamento estacionamento = null;
+            string action = objeto[0].ToString();
 
             var connection = new EstacionamentoEAI.DAO.Connection();
             SqlConnection conn = connection.AbrirConexao();
             SqlCommand sqlCommand = new SqlCommand();
             sqlCommand.CommandType = CommandType.Text;
 
-            if (objeto[0].ToString() == "vagas")
+            switch (action)
             {
-                sqlCommand.CommandText = "SELECT Id, Nome, Endereco, Responsavel, Telefone, NumeroVagas, CustoHora, Manager FROM Estacionamentos WHERE Id = 1";
+                case "vagas":
+                    sqlCommand.CommandText = "SELECT Id, Nome, Endereco, Responsavel, Telefone, NumeroVagas, CustoHora, Manager FROM Estacionamentos WHERE Id = 1";
 
-                sqlCommand.Connection = conn;
-                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-                if (sqlDataReader.HasRows)
-                {
-                    sqlDataReader.Read();
-                    estacionamento = new Estacionamento
+                    sqlCommand.Connection = conn;
+                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                    if (sqlDataReader.HasRows)
                     {
-                        Id = sqlDataReader.GetInt32(0),
-                        Nome = sqlDataReader.GetString(1),
-                        Endereco = sqlDataReader.GetString(2),
-                        Responsavel = sqlDataReader.GetString(3),
-                        Telefone = sqlDataReader.GetString(4),
-                        NumeroDeVagas = sqlDataReader.GetInt32(5),
-                        CustoHora = sqlDataReader.GetDecimal(6),
-                        Manager = new Usuario { Id = sqlDataReader.GetInt32(7) }
-                    };
-                }
+                        sqlDataReader.Read();
+                        estacionamento = new Estacionamento
+                        {
+                            Id = sqlDataReader.GetInt32(0),
+                            Nome = sqlDataReader.GetString(1),
+                            Endereco = sqlDataReader.GetString(2),
+                            Responsavel = sqlDataReader.GetString(3),
+                            Telefone = sqlDataReader.GetString(4),
+                            NumeroDeVagas = sqlDataReader.GetInt32(5),
+                            CustoHora = sqlDataReader.GetDecimal(6),
+                            Manager = new Usuario { Id = sqlDataReader.GetInt32(7) }
+                        };
+                    }
+                    break;                
+                default:
+                    break;
             }
+
             connection.FecharConexao();
             return estacionamento;
         }

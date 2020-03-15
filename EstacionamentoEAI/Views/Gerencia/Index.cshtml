@@ -1,0 +1,41 @@
+﻿@{
+        Layout = "~/Views/Shared/_LayoutGerencia.cshtml";
+        ViewBag.Title = "Estacionamento EAI";
+}
+<h3>
+    <br />
+    Controle de Veículos
+</h3>
+<div class="card-group">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Total de Vagas</h5>
+            <h1 class="card-subtitle"><strong>@ViewBag.VagasTotal </strong></h1>
+            <p class="card-text">Estacionamento : @ViewBag.Estacionamento</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Vagas Ocupadas</h5>
+            <h1 class="card-subtitle"><strong>@ViewBag.VagasOcupadas </strong></h1>
+            <p class="card-text">Estacionamento : @ViewBag.Estacionamento</p>
+            @if (ViewBag.VagasOcupadas > 0)
+            {
+        <div class="card-footer">
+            @Html.ActionLink("Ver Carros Estacionados", "CarrosEstacionados", "Gerencia")
+        </div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Vagas Disponíveis</h5>
+            <h1 class="card-subtitle"><strong>@ViewBag.VagasDisponiveis </strong></h1>
+            <p class="card-text">Estacionamento : @ViewBag.Estacionamento</p>
+        </div>
+    </div>
+</div>
+    <br />
+    <br />
