@@ -123,7 +123,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Registros](
-	[Id] [int] NOT NULL,
+	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Estacionamento] [int] NOT NULL,
 	[Veiculo] [int] NOT NULL,
 	[DataDeEntrada] [datetime] NOT NULL,
