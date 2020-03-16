@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Administracao";
+    Layout = "~/Views/Shared/_LayoutGerencia.cshtml";
+}
+
+<h2>Administração</h2>
+<hr />
+<p></p>
+<div class="card-deck mb-3 text-center">
+    <div class="card mb-4 box-shadow">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Adicionar Marca</h4>
+        </div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title"></h1>
+            <form method="post">
+                <label>Digite a Marca:</label><br />
+                <input class="form-control" type="text" id="novaMarca" name="novaMarca" required />
+                <ul class="list-unstyled mt-3 mb-4">
+                    <li>&nbsp;</li>
+                    <li>&nbsp;</li>
+                    <li>&nbsp;</li>
+                </ul>
+                <button type="submit" id="controle_btn" name="controle_btn" value="addMarca" class="btn btn-lg btn-block btn-outline-danger">Adicionar Marca</button>
+            </form>
+        </div>
+    </div>
+    <div class="card mb-4 box-shadow">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Adicionar Modelo</h4>
+        </div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title"></h1>
+            <form method="post">
+                <label>Selecione a Marca:</label><br />
+                <select id="marcaVeiculo" name="marcaVeiculo" class="form-control">
+                    <option value="none">Selecione uma Marca</option>
+                    @foreach (var item in ViewData["Marca"] as IEnumerable<EstacionamentoEAI.Definition.Marca>)
+                    {
+                        <option value="@item.Id">@item.Nome</option>
+                    }
+                </select><br />
+                <label>Digite o novo Modelo:</label><br />
+                <input class="form-control" type="text" id="novoModelo" name="novoModelo" required/><br />
+                <button type="submit" id="controle_btn" name="controle_btn" value="addModelo" class="btn btn-lg btn-block btn-outline-warning">Adicionar Modelo</button>
+            </form>
+        </div>
+    </div>
+    <div class="card mb-4 box-shadow">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Editar Veículo</h4>
+        </div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title"></h1>
+            <form method="post">
+                <label>Digite a placa:</label><br />
+                <input class="form-control"type="text" id="placaEdit" name="placaEdit" disabled />
+                <ul class="list-unstyled mt-3 mb-4">
+                    <li>&nbsp;</li>
+                    <li>&nbsp;</li>
+                    <li>&nbsp;</li>
+                </ul>
+                <button type="submit" id="controle_btn" name="controle_btn" value="editVeiculo" class="btn btn-lg btn-block btn-outline-info">Editar Veículo</button>
+            </form>
+        </div>
+    </div>
+</div>

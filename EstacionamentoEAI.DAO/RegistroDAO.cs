@@ -351,7 +351,7 @@ namespace EstacionamentoEAI.DAO
                                          " INNER JOIN Modelos ON Veiculo.Modelo = Modelos.Id" +
                                          " INNER JOIN Estacionamentos ON Registros.Estacionamento = Estacionamentos.Id" +
                                          " INNER JOIN Marca ON Modelos.Marca = Marca.id" +
-                                         " WHERE (Estacionamento.ID = @estacionamentoId)";
+                                         " WHERE (Estacionamento.ID = @estacionamentoId) ORDER BY Registros.DataDeEntrada ASC";
 
                 sqlCommand.Parameters.Add("@estacionamentoId", SqlDbType.Int).Value = estacionamento.Id;
                 try

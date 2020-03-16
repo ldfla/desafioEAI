@@ -1,7 +1,8 @@
-﻿@model IEnumerable<EstacionamentoEAI.Definition.Relatorio>
+﻿@model EstacionamentoEAI.Definition.Relatorio
+
 @{
     Layout = "";
-    ViewBag.Title = $"Registro de Atividades entre {ViewBag.DataInicial} e {ViewBag.DataFinal}";
+    ViewBag.Title = $"Registro de Atividades entre {@Model.Semana.DataInicial.ToString("dd/MM/yyyy")} e {@Model.Semana.DataFinal.AddDays(-1).ToString("dd/MM/yyyy")}";
 }
 <!DOCTYPE html>
 <html>
@@ -16,31 +17,35 @@
     <div class="relatorio">
         <div class="pagina">
             <div class="conteudo">
-                <h1>@ViewBag.Title</h1>
+                <h2 class="negrito">@ViewBag.Title</h2>
                 <div class="tabela">
                     <div class="tabelaCabecalho">
                         <div class="tabelaRow">
                             <div class="tabelaCell">Dia</div>
                             <div class="tabelaCell">Total de Carros</div>
                             <div class="tabelaCell">Total de Carros Únicos</div>
-                            <div class="tabelaCell">Total de Carros Repetidos</div>
                             <div class="tabelaCell">Receita</div>
                         </div>
                     </div>
                     <div class="tabelaCorpo">
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.View)
                         {
                             <div class="tabelaRow">
-                                <div class="tabelaCell">@item.Semana.DataInicial</div>
-                                <div class="tabelaCell">@item.Veiculo.Placa</div>
-                                <div class="tabelaCell">@item.Veiculo.Modelo.Marca.Nome</div>
-                                <div class="tabelaCell">@item.Veiculo.Modelo.Nome</div>
-                                <div class="tabelaCell">@item.DataDeEntrada</div>                                
+                                <div class="tabelaCell">@item.Data.Date.ToString("dd/MM/yyyy") (@item.Data.DayOfWeek)</div>
+                                <div class="tabelaCell">@item.TotalVeiculos</div>
+                                <div class="tabelaCell">@item.ClientesUnicos</div>
+                                <div class="tabelaCell">@item.Receita.ToString("C2")</div>
                             </div>
                         }
-
                     </div>
                 </div>
+                <p></p>
+                <h2>Veículos Frequentes Essa Semana: <strong>@Model.VeiculosFrequentes.Count</strong></h2>
+                @foreach (var item in Model.VeiculosFrequentes)
+                {
+                    <h4>@Html.ActionLink($"Histórico de {item.Placa}", "Historico", "Gerencia", routeValues: new { placa = item.Placa }, htmlAttributes: null)</h4>
+                }
+
 
                 @* Rodapé da Página de Relatórios*@
                 <div class="rodape">
@@ -55,6 +60,5 @@
             </div>
         </div>
     </div>
-    <script>window.print();</script>
 </body>
 </html>

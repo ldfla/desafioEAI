@@ -47,21 +47,20 @@ namespace EstacionamentoEAI.Controllers
         public ActionResult Index(FormCollection formCollection)
         {
             string action = formCollection["controle_btn"];
-            string placa = formCollection["placaVeiculo"].Replace("-","").ToUpper();
+            string placa = formCollection["placaVeiculo"].Replace("-", "").ToUpper();
 
             switch (action)
             {
                 case "entrada":
-
-                    if (RegistraEntrada(formCollection) > 0)
+                    Veiculo veiculo = RegistraEntrada(formCollection);
+                    if (veiculo.Cliente.Id == 0)
                     {
-                        RedirectToAction("Index");
+                        return RedirectToAction("NovoCliente", new { veiculoId = veiculo.Id });
                     }
                     else
                     {
                         return RedirectToAction("Estacionado", new { placa = placa });
                     }
-                    break;
                 case "saida":
                     if (RegistraSaida(placa))
                     {
@@ -76,6 +75,48 @@ namespace EstacionamentoEAI.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult NovoCliente(int veiculoId)
+        {
+            VeiculoDAO veiculoDAO = new VeiculoDAO(conn);
+            Veiculo veiculo = veiculoDAO.BuscarItem("id", veiculoId);
+            ViewData.Model = veiculo;
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult NovoCliente(FormCollection formCollection)
+        {
+            int veiculoId = Convert.ToInt32(formCollection["veiculoId"]);
+            string nome = formCollection["Cliente.Nome"];
+            string documento = formCollection["Cliente.Documento"];
+            string endereco = formCollection["Cliente.Endereco"];
+            string telefone = formCollection["Cliente.Telefone"];
+
+            VeiculoDAO veiculoDAO = new VeiculoDAO(conn);
+            Veiculo veiculo = veiculoDAO.BuscarItem("id", veiculoId);
+
+            if (veiculo != null && veiculo.Cliente.Id == 0)
+            {
+                ClienteDAO clienteDAO = new ClienteDAO(conn);
+                Cliente cliente = clienteDAO.Inserir(new Cliente
+                {
+                    Nome = nome,
+                    Documento = documento,
+                    Endereco = endereco,
+                    Telefone = telefone
+                });
+                veiculo.Cliente = cliente;
+                if (veiculoDAO.Atualizar(veiculo))
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return View();
         }
 
         /// <summary>
@@ -142,7 +183,7 @@ namespace EstacionamentoEAI.Controllers
             List<Modelo> ModeloList = ListaModelosPorMarca(marca);
             return Json(ModeloList, JsonRequestBehavior.AllowGet);
         }
-        
+
         #region private Methods
 
         private bool VerificaPlaca(string placa)
@@ -155,7 +196,7 @@ namespace EstacionamentoEAI.Controllers
 
             return false;
         }
-        
+
         private string VerificaRazaoErroSaida(string placa)
         {
             RegistroDAO registroDAO = new RegistroDAO(conn);
@@ -169,7 +210,7 @@ namespace EstacionamentoEAI.Controllers
             return $"Veículo já deu Saída às {registro.DataDeSaida.ToString("dd/MM/yyyy HH:mm:ss")}";
         }
 
-        public int RegistraEntrada(FormCollection formCollection)
+        private Veiculo RegistraEntrada(FormCollection formCollection)
         {
             string placa = formCollection["placaVeiculo"].ToUpper();
             string cliente = formCollection["nomeCliente"];
@@ -227,10 +268,10 @@ namespace EstacionamentoEAI.Controllers
                     conn.FecharConexao();
                 }
             }
-            return registroId;
+            return veiculo;
         }
 
-        public bool RegistraSaida(string placa)
+        private bool RegistraSaida(string placa)
         {
             bool atualizado = false;
 
@@ -259,7 +300,7 @@ namespace EstacionamentoEAI.Controllers
             return atualizado;
         }
 
-        public Usuario AutenticaFuncionarioFake()
+        private Usuario AutenticaFuncionarioFake()
         {
             UsuarioDAO usuarioDAO = new UsuarioDAO(conn);
             return usuarioDAO.BuscarItem("funcionario");

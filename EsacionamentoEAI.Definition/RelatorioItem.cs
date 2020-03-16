@@ -6,8 +6,11 @@ namespace EstacionamentoEAI.Definition
     public class RelatorioItem
     {
         public DateTime Data { get; set; }
+
         public int TotalVeiculos { get; set; }
+
         public int ClientesUnicos { get; set; }
-        public List<Veiculo> VeiculosFrequentes { get; set; }         
+
+        public Decimal Receita { get; set; }
     }
 }

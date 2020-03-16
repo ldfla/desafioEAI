@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using EstacionamentoEAI;
 using EstacionamentoEAI.Controllers;
 using EstacionamentoEAI.DAO;
 using System.Data.SqlClient;
@@ -145,6 +144,17 @@ namespace EstacionamentoEAI.UnitTest
         }
 
         [TestMethod]
+        public void DadosDoRelatorio()
+        {
+            var controller = new GerenciaController();
+            Relatorio relatorio = new Relatorio(new Semana(new DateTime(2020,03,10), DayOfWeek.Sunday), new Estacionamento { Id = 1});
+            RegistroDAO registroDAO = new RegistroDAO(conn);
+            relatorio.Registros = registroDAO.GeraRelatorio(relatorio);
+
+            relatorio.View = controller.GerarDadosRelatorio(relatorio);
+        }
+
+        [TestMethod]
         public void AdicionarMarca()
         {
 
@@ -159,7 +169,7 @@ namespace EstacionamentoEAI.UnitTest
         public void GerarHistorico()
         {
             RegistroDAO registroDAO = new RegistroDAO(conn);
-            List<Registro> registros = registroDAO.ListarItens("FQJ4636");
+            List<Registro> registros = registroDAO.ListarItens("FQJ4444");
 
             Assert.AreNotEqual(0, registros.Count);
         }

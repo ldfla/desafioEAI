@@ -1,44 +1,87 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Estacionamento EAI - Desafio">
+    <meta name="author" content="Leandro Figueiredo">
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
-
-
-<body class="text-center">
-
-    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
-        <header class="masthead mb-auto">
-            <div class="inner">
-                <nav class="nav nav-masthead justify-content-center">
-                    @Html.ActionLink("Estacionamento EAI", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                    @Html.ActionLink("Início", "Index", "Home", new object { }, new { @class = "nav-link" })
-                    @Html.ActionLink("Sobre", "About", "Home", new object { }, new { @class = "nav-link" })
-                    @Html.ActionLink("Contato", "Contact", "Home", new object { }, new { @class = "nav-link" })
-                </nav>
+<body>
+    <header>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">@Html.ActionLink("Estacionamento EAI", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</li>
+                    <li class="nav-item">@Html.ActionLink("Início", "Index", "Home", new object { }, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Sobre", "About", "Home", new object { }, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Contato", "Contact", "Home", new object { }, new { @class = "nav-link" })</li>
+                </ul>
             </div>
-            
-        </header>
-
-        <main role="main" class="inner cover">
-            @RenderBody()
-        </main>
-
-        <footer class="mastfoot mt-auto">
-            <div class="inner">
-                <p>&copy; @DateTime.Now.Year - Estacionamento EAI Brasil.</p>
-            </div>
-        </footer>
-    </div>
+        </nav>
+    </header>
 
 
-        @Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/bootstrap")
-        @RenderSection("scripts", required: false)
-    </body>
+
+    <main role="main" class="container">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">&copy; @DateTime.Now.Year - Estacionamento EAI Brasil.</span>
+        </div>
+    </footer>
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <style>
+            /* Sticky footer styles
+        -------------------------------------------------- */
+            html {
+                position: relative;
+                min-height: 100%;
+            }
+
+            body {
+                /* Margin bottom by footer height */
+                margin-bottom: 60px;
+            }
+
+            .footer {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                /* Set the fixed height of the footer here */
+                height: 60px;
+                line-height: 60px; /* Vertically center the text there */
+                background-color: #f5f5f5;
+            }
+
+
+            /* Custom page CSS
+        -------------------------------------------------- */
+            /* Not required for template or sticky footer method. */
+
+            body > .container {
+                padding: 60px 15px 0;
+            }
+
+            .footer > .container {
+                padding-right: 15px;
+                padding-left: 15px;
+            }
+
+            code {
+                font-size: 80%;
+            }
+    </style>
+</body>
 </html>

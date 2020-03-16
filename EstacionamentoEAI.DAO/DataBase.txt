@@ -1387,3 +1387,27 @@ INSERT INTO [Modelos] ( Nome, Marca ) VALUES('Pick-Up', (SELECT  Id FROM Marca W
 INSERT INTO [Modelos] ( Nome, Marca ) VALUES('TLX', (SELECT  Id FROM Marca WHERE Nome = 'ACURA'))
 INSERT INTO [Modelos] ( Nome, Marca ) VALUES('80', (SELECT  Id FROM Marca WHERE Nome = 'AUDI'))
 GO
+
+INSERT INTO [dbo].[Veiculo] ([Placa],[Modelo],[Observacao],[Cliente]) VALUES ('AAA0000',76,'',1)
+INSERT INTO [dbo].[Veiculo] ([Placa],[Modelo],[Observacao],[Cliente]) VALUES ('FQJ4444',1,'',2)
+INSERT INTO [dbo].[Veiculo] ([Placa],[Modelo],[Observacao],[Cliente]) VALUES ('ZZZ1Z34',179,'Fiat Marea',3)
+INSERT INTO [dbo].[Veiculo] ([Placa],[Modelo],[Observacao],[Cliente]) VALUES ('HHH2536',507,'',4)
+GO
+
+INSERT INTO [dbo].[Clientes]([Nome],[Endereco],[Documento],[Telefone]) VALUES ('Leandro','Vl Andrade','000.000.000-00','(00)0000-00000')
+INSERT INTO [dbo].[Clientes]([Nome],[Endereco],[Documento],[Telefone]) VALUES ('Leonardo','jd Cruzeiro','000.000.000-00','(00)0000-00000')
+INSERT INTO [dbo].[Clientes]([Nome],[Endereco],[Documento],[Telefone]) VALUES ('Felipe','Paulista','000.000.000-00','(00)0000-00000')
+INSERT INTO [dbo].[Clientes]([Nome],[Endereco],[Documento],[Telefone]) VALUES ('Marcelo','Cerqueira Cesar','000.000.000-00','(00)0000-00000')
+GO
+
+
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,2,'2020-03-09 14:21:29.587','2020-03-09 17:55:00.757',2,2,40)
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,1,'2020-03-09 14:21:29.587','2020-03-09 17:55:00.757',2,2,40)
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,2,'2020-03-10 17:27:33.320','2020-03-11 17:48:40.407',2,2,10)
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,1,'2020-03-11 17:27:33.320','2020-03-11 17:48:40.407',2,2,10)
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,3,'2020-03-10 07:27:33.320','2020-03-11 07:48:40.407',2,2,10)
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,4,'2020-03-10 07:27:33.320','2020-03-11 07:48:40.407',2,2,10)
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,2,'2020-03-14 19:51:30.660','2020-03-14 21:50:30.660',2,2,20)
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,1,'2020-03-15 20:50:23.173','2020-03-16 00:30:23.173',2,2,40)
+GO
+

@@ -12,6 +12,7 @@ namespace EstacionamentoEAI.Definition
         public int SemanasPosteriores { get; set; }
         public bool IncluirCarrosEstacionados { get; set; }
         public List<Registro> Registros { get; set; }
+        public List<Veiculo> VeiculosFrequentes { get; set; }
         public List<RelatorioItem> View { get; set; }
 
         /// <summary>

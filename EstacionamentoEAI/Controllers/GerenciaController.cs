@@ -72,7 +72,7 @@ namespace EstacionamentoEAI.Controllers
                 List<Registro> registros = registroDAO.ListarItens(placa);
 
                 ViewBag.Placa = placa.ToUpper();
-                ViewData.Model = registros;
+                ViewData.Model = registros.OrderBy(d => d.DataDeEntrada);
 
                 return View();
             }
@@ -116,32 +116,124 @@ namespace EstacionamentoEAI.Controllers
                 relatorio.Registros = registroDAO.GeraRelatorio(relatorio);
 
                 relatorio.View = GerarDadosRelatorio(relatorio);
-                
+                relatorio.VeiculosFrequentes = (List<Veiculo>)relatorio.Registros.GroupBy(x => x.Veiculo.Placa).Where(x => x.Count() > 1).Select(x => x.FirstOrDefault().Veiculo).ToList();
+
+                ViewData.Model = relatorio;
                 return View();
             }
 
-            return RedirectToAction("Index", "Estacionamento");
+            return RedirectToAction("Index", "Gerencia");
+
+        }
+
+        [HttpGet]
+        public ActionResult Semanal()
+        {
+            return RedirectToAction("Relatorios", "Gerencia");
+        }
+
+        [HttpGet]
+        public ActionResult Administracao()
+        {
+            MarcaDAO marcaDAO = new MarcaDAO(conn);
+            List<Marca> lstMarca = marcaDAO.ListarItens();
+
+            ViewData["Marca"] = lstMarca;
+            return View();
+        }
+        
+        [HttpPost]
+        public ActionResult Administracao(FormCollection formCollection)
+        {
+            string action = formCollection["controle_btn"];
+            string novoModelo = formCollection["novoModelo"];
+            string novaMarca = formCollection["novaMarca"];
+            int idMarca = Convert.ToInt32(formCollection["marcaVeiculo"]);
+            //string placa = formCollection["placaEdit"].Replace("-", "").ToUpper();
+
+            switch (action)
+            {
+                case "addModelo":
+                    ModeloDAO modeloDAO = new ModeloDAO(conn);
+                    Modelo modelo = modeloDAO.BuscarItem("modelo", novoModelo, idMarca);
+                    if (modelo == null)
+                    {
+                        modeloDAO.Inserir(new Modelo { 
+                            Nome = novoModelo,
+                            Marca = new Marca { Id = idMarca}
+                        });
+                    }
+                    return RedirectToAction("Index");
+                case "addMarca":
+                    MarcaDAO marcaDAO = new MarcaDAO(conn);
+                    Marca marca= marcaDAO.BuscarItem("marcaNome", novaMarca);
+                    if (marca == null)
+                    {
+                        marcaDAO.Inserir(new Marca { 
+                            Nome = novaMarca
+                        });
+                    }
+                    return RedirectToAction("Index"); 
+                case "editVeiculo":
+                    break;
+                default:
+                    return RedirectToAction("Administracao");
+            }
+
+            return RedirectToAction("Administracao");  
         }
 
         #region private Methods
 
-        private List<RelatorioItem> GerarDadosRelatorio(Relatorio relatorio)
+        public List<RelatorioItem> GerarDadosRelatorio(Relatorio relatorio)
         {
-            List<RelatorioItem> relatorioItems = new List<RelatorioItem>();
-            DateTime dataInicial = relatorio.Semana.DataInicial;
+            List<RelatorioItem> relatorioItens = new List<RelatorioItem>();
+            DateTime data = relatorio.Semana.DataInicial;
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 7; i++)
             {
+                data = relatorio.Semana.DataInicial.AddDays(i);
+                RelatorioItem relatorioItem = new RelatorioItem();
+                if (relatorio.Registros.Count == 0)
+                {
+                    return null;
+                }
 
+                List<Registro> registros = relatorio.Registros.Where(x => x.DataDeEntrada.Date == data.Date).ToList();
+                if (registros.Count > 0)
+                {
+                    relatorioItens.Add(new RelatorioItem
+                    {
+                        Data = data,
+                        TotalVeiculos = registros.Count,
+                        ClientesUnicos = registros.GroupBy(r => r.Veiculo.Placa).ToList().Count,
+                        Receita = Convert.ToDecimal(registros.Sum(x => x.Valor))
+                    });
+                }
+                else
+                {
+                    List<Veiculo> listVeiculos = new List<Veiculo>();
+
+                    relatorioItens.Add(new RelatorioItem
+                    {
+                        Data = data,
+                        ClientesUnicos = 0,
+                        TotalVeiculos = 0,
+                        Receita = 0
+                    });
+
+                }
+                relatorioItem = null;
+                registros = null;
             }
 
-            return relatorioItems;
+            return relatorioItens;
         }
-
+        
         private bool MakeBoolean(string value)
         {
             value = value.ToUpper().Trim();
-            if (value == "ON" || value=="1" || value == "TRUE" || value == "SIM")
+            if (value == "ON" || value == "1" || value == "TRUE" || value == "SIM")
                 return true;
 
             return false;
@@ -165,7 +257,7 @@ namespace EstacionamentoEAI.Controllers
         }
 
         #endregion
-        
+
     }
 
 

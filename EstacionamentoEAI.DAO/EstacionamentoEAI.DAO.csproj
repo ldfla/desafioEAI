@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClienteDAO.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="EstacionamentoDAO.cs" />
     <Compile Include="Interfaces\IDAO.cs" />

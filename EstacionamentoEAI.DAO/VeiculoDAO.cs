@@ -22,7 +22,33 @@ namespace EstacionamentoEAI.DAO
 
         public bool Atualizar(Veiculo model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
+                {
+                    //Define o comando SQL como tipo Texto
+                    sqlCommand.CommandType = System.Data.CommandType.Text;
+                    sqlCommand.CommandText = "UPDATE Veiculo SET Modelo = @modelo, Observacao= @observacao," +
+                                             " Cliente = @cliente" +
+                                             " WHERE Id = @id";
+
+                    //Adiciona os parametros de Atualização. 
+                    sqlCommand.Parameters.Add("@modelo", SqlDbType.Int).Value = model.Modelo.Id;
+                    sqlCommand.Parameters.Add("@observacao", SqlDbType.NVarChar).Value = model.Observacao;
+                    sqlCommand.Parameters.Add("@cliente", SqlDbType.Int).Value = model.Cliente.Id;
+                    sqlCommand.Parameters.Add("@id", SqlDbType.Int).Value = model.Id;
+
+                    //Executa a Query de update
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException)
+            {
+                //Se houver erro na atualização, retorna false
+                return false;
+            }
+
+            return true;
         }
 
         public Veiculo BuscarItem(params object[] objeto)
@@ -35,12 +61,18 @@ namespace EstacionamentoEAI.DAO
 
                 string selectQuery = string.Empty;
                 string placa = string.Empty;
+                int idVeiculo;
                 switch (objeto[0].ToString())
                 {
                     case "placa":
                         placa = objeto[1].ToString();
                         selectQuery = "SELECT ID, Placa, Modelo, Observacao, Cliente FROM Veiculo WHERE Placa = @placa";
                         sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = placa.Replace("-", "").ToUpper() ;
+                        break;
+                    case "id":
+                        idVeiculo = Convert.ToInt32(objeto[1].ToString());
+                        selectQuery = "SELECT ID, Placa, Modelo, Observacao, Cliente FROM Veiculo WHERE Id = @idVeiculo";
+                        sqlCommand.Parameters.Add("@idVeiculo", SqlDbType.Int).Value = idVeiculo;
                         break;
                     default:
                         return veiculo;

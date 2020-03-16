@@ -3,6 +3,7 @@ using EstacionamentoEAI.Definition;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -26,13 +27,60 @@ namespace EstacionamentoEAI.DAO
 
         public Marca BuscarItem(params object[] objeto)
         {
-            throw new NotImplementedException();
+            Marca marca = null;
+            using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
+            {
+                //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL. Sem uso de SP
+                sqlCommand.CommandType = System.Data.CommandType.Text;
+
+                string action = objeto[0].ToString();
+                string selectQuery = string.Empty;
+                string nomeMarca = string.Empty;
+                switch (action)
+                {
+                    case "marcaNome":
+                        nomeMarca = objeto[1].ToString();
+                        selectQuery = "SELECT Id, Nome FROM Marca WHERE (Nome = @nomeMarca)";
+                        sqlCommand.Parameters.Add("@nomeMarca", SqlDbType.NVarChar).Value = nomeMarca.ToUpper();
+
+                        break;
+                    default:
+                        return marca;
+                }
+                sqlCommand.CommandText = selectQuery;
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                if (sqlDataReader.HasRows)
+                {
+                    sqlDataReader.Read();
+                    marca = new Marca
+                    {
+                        Id = sqlDataReader.GetInt32(0),
+                        Nome = sqlDataReader.GetString(1),
+                    };
+                }
+                sqlDataReader.Close();
+            }
+            return marca;
         }
 
 
         public Marca Inserir(Marca model)
         {
-            throw new NotImplementedException();
+            using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
+            {
+                //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL. Sem uso de SP
+                sqlCommand.CommandType = System.Data.CommandType.Text;
+                sqlCommand.CommandText = "INSERT into Marca (Nome)" +
+                                        " VALUES (@nome) SELECT SCOPE_IDENTITY()";
+
+                //Adiciona os parametros de Inserção. 
+                sqlCommand.Parameters.Add("@nome", SqlDbType.NVarChar).Value = model.Nome;
+                
+
+                //Executa a Query e retorna o ID do registro adicionado
+                model.Id = Convert.ToInt32(sqlCommand.ExecuteScalar().ToString());
+            }
+            return model;
         }
 
 
