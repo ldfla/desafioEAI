@@ -1411,5 +1411,6 @@ INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataD
 INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,4,'2020-03-10 07:27:33.320','2020-03-11 07:48:40.407',2,2,10)
 INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,2,'2020-03-14 19:51:30.660','2020-03-14 21:50:30.660',2,2,20)
 INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,1,'2020-03-15 20:50:23.173','2020-03-16 00:30:23.173',2,2,40)
+INSERT INTO [dbo].[Registros] ([Estacionamento],[Veiculo],[DataDeEntrada],[DataDeSaida],[UsuarioEntrada],[UsuarioSaida],[Valor]) VALUES (1,1,'2020-03-16 04:05:23.173',NULL,2,NULL,NULL)
 GO
 
