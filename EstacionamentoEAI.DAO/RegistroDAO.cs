@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,7 +82,7 @@ namespace EstacionamentoEAI.DAO
                                         " INNER JOIN Estacionamentos ON Registros.Estacionamento = Estacionamentos.Id" +
                                         " WHERE (Veiculo.Placa = @placa and DataDeSaida IS NULL)";
                         //Adiciona os parametros de Busca da Placa. 
-                        sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = placa;
+                        sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = placa.Replace("-", "").ToUpper();
                         break;
                     default:
                         return registro;
@@ -102,7 +103,7 @@ namespace EstacionamentoEAI.DAO
                                     {
                                         Id = sqlDataReader.GetInt32(0),
                                         Estacionamento = new Estacionamento { Id = sqlDataReader.GetInt32(1) },
-                                        Veiculo = new Veiculo { Id = sqlDataReader.GetInt32(2), Placa = placa },
+                                        Veiculo = new Veiculo { Id = sqlDataReader.GetInt32(2), Placa = placa.Replace("-", "").ToUpper() },
                                         DataDeEntrada = sqlDataReader.GetDateTime(3),
                                         UsuarioEntrada = new Usuario { Id = sqlDataReader.GetInt32(5) },
                                         CustoHora = sqlDataReader.GetDecimal(10)
@@ -116,7 +117,7 @@ namespace EstacionamentoEAI.DAO
                                     {
                                         Id = sqlDataReader.GetInt32(0),
                                         Estacionamento = new Estacionamento { Id = sqlDataReader.GetInt32(1) },
-                                        Veiculo = new Veiculo { Id = sqlDataReader.GetInt32(2), Placa = placa },
+                                        Veiculo = new Veiculo { Id = sqlDataReader.GetInt32(2), Placa = placa.Replace("-", "").ToUpper() },
                                         DataDeEntrada = sqlDataReader.GetDateTime(3),
                                         UsuarioEntrada = new Usuario { Id = sqlDataReader.GetInt32(5) },
                                         CustoHora = sqlDataReader.GetDecimal(10),
@@ -161,7 +162,6 @@ namespace EstacionamentoEAI.DAO
             }
             return model;
         }
-
 
         public List<Registro> ListarVagasOcupadas(int estacionamentoId)
         {
@@ -217,7 +217,7 @@ namespace EstacionamentoEAI.DAO
             }
             return registros;
         }
-
+        
         public int ContaVagasOcupadas(int estacionamentoId)
         {
             int vagasOcupadas = 0;
@@ -242,15 +242,304 @@ namespace EstacionamentoEAI.DAO
             return vagasOcupadas;
         }
 
+        public List<Registro> ListarItens(string placa)
+        {
+            List<Registro> registros = new List<Registro>();
+
+            using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
+            {
+                //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL
+                sqlCommand.CommandType = System.Data.CommandType.Text;
+                sqlCommand.CommandText = "SELECT Registros.Id, Modelos.Nome AS ModeloNome, Modelos.Id AS ModeloId, Veiculo.Placa, Veiculo.Id AS VeiculoId," +
+                                         " Veiculo.Observacao, Registros.Estacionamento, Registros.DataDeEntrada, Registros.UsuarioEntrada," +
+                                         " Estacionamentos.CustoHora, Marca.Nome AS MarcaNome, Marca.Id AS MarcaId, Estacionamentos.Nome AS EstacionamentoNome," +
+                                         " Estacionamentos.Id AS EstacionamentoId, Registros.DataDeSaida, Registros.UsuarioSaida, Registros.Valor" +
+                                         " FROM Veiculo" +
+                                         " INNER JOIN Registros ON Veiculo.Id = Registros.Veiculo" +
+                                         " INNER JOIN Modelos ON Veiculo.Modelo = Modelos.Id" +
+                                         " INNER JOIN Estacionamentos ON Registros.Estacionamento = Estacionamentos.Id" +
+                                         " INNER JOIN Marca ON Modelos.Marca = Marca.id" +
+                                         " WHERE (Veiculo.Placa= @placa)";
+
+                sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = placa.Replace("-", "").ToUpper();
+                try
+                {
+                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DateTime dataSaida = DateTime.MinValue;
+                            Usuario usuarioSaida = null;
+                            Decimal valor = 0;
+
+                            //Valida dados para o relatorio
+                            //Data de Saida
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("DataDeSaida")))
+                            {
+                                dataSaida = sqlDataReader.GetDateTime(14);
+                            }
+
+                            //Funcionario que registra Saida
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("UsuarioSaida")))
+                            {
+                                usuarioSaida = new Usuario { Id = sqlDataReader.GetInt32(15) };
+                            }
+                            else
+                            {
+                                usuarioSaida = new Usuario { Id = 0 };
+                            }
+
+                            //Valor
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("Valor")))
+                            {
+                                valor = sqlDataReader.GetDecimal(16);
+                            }
+
+                            registros.Add(new Registro
+                            {
+                                Id = sqlDataReader.GetInt32(0),
+                                Veiculo = new Veiculo
+                                {
+                                    Id = sqlDataReader.GetInt32(4),
+                                    Placa = sqlDataReader.GetString(3),
+                                    Observacao = sqlDataReader.GetString(5),
+                                    Modelo = new Modelo
+                                    {
+                                        Id = sqlDataReader.GetInt32(2),
+                                        Nome = sqlDataReader.GetString(1),
+                                        Marca = new Marca
+                                        {
+                                            Id = sqlDataReader.GetInt32(11),
+                                            Nome = sqlDataReader.GetString(10)
+                                        }
+                                    }
+                                },
+                                DataDeEntrada = sqlDataReader.GetDateTime(7),
+                                UsuarioEntrada = new Usuario { Id = sqlDataReader.GetInt32(8) },
+                                CustoHora = sqlDataReader.GetDecimal(9),
+                                Estacionamento = new Estacionamento { Id = sqlDataReader.GetInt32(13), Endereco = sqlDataReader.GetString(12) },
+                                DataDeSaida = dataSaida,
+                                UsuarioSaida = usuarioSaida,
+                                Valor = valor
+                            });
+                        }
+                    }
+                }
+                catch (SqlException)
+                {
+                    return registros;                    
+                }
+            }
+            return registros;
+        }
+
+        public List<Registro> ListarItens(Estacionamento estacionamento)
+        {
+            List<Registro> registros = new List<Registro>();
+
+            using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
+            {
+                //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL
+                sqlCommand.CommandType = System.Data.CommandType.Text;
+                sqlCommand.CommandText = "SELECT Registros.Id, Modelos.Nome AS ModeloNome, Modelos.Id AS ModeloId, Veiculo.Placa, Veiculo.Id AS VeiculoId," +
+                                         " Veiculo.Observacao, Registros.Estacionamento, Registros.DataDeEntrada, Registros.UsuarioEntrada," +
+                                         " Estacionamentos.CustoHora, Marca.Nome AS MarcaNome, Marca.Id AS MarcaId, Estacionamentos.Nome AS EstacionamentoNome," +
+                                         " Estacionamentos.Id AS EstacionamentoId, Registros.DataDeSaida, Registros.UsuarioSaida, Registros.Valor" +
+                                         " FROM Veiculo" +
+                                         " INNER JOIN Registros ON Veiculo.Id = Registros.Veiculo" +
+                                         " INNER JOIN Modelos ON Veiculo.Modelo = Modelos.Id" +
+                                         " INNER JOIN Estacionamentos ON Registros.Estacionamento = Estacionamentos.Id" +
+                                         " INNER JOIN Marca ON Modelos.Marca = Marca.id" +
+                                         " WHERE (Estacionamento.ID = @estacionamentoId)";
+
+                sqlCommand.Parameters.Add("@estacionamentoId", SqlDbType.Int).Value = estacionamento.Id;
+                try
+                {
+                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DateTime dataSaida = DateTime.MinValue;
+                            Usuario usuarioSaida = null;
+                            Decimal valor = 0;
+
+                            //Valida dados para o relatorio
+                            //Data de Saida
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("DataDeSaida")))
+                            {
+                                dataSaida = sqlDataReader.GetDateTime(14);
+                            }
+
+                            //Funcionario que registra Saida
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("UsuarioSaida")))
+                            {
+                                usuarioSaida = new Usuario { Id = sqlDataReader.GetInt32(15) };
+                            }
+                            else
+                            {
+                                usuarioSaida = new Usuario { Id = 0 };
+                            }
+
+                            //Valor
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("Valor")))
+                            {
+                                valor = sqlDataReader.GetDecimal(16);
+                            }
+
+                            registros.Add(new Registro
+                            {
+                                Id = sqlDataReader.GetInt32(0),
+                                Veiculo = new Veiculo
+                                {
+                                    Id = sqlDataReader.GetInt32(4),
+                                    Placa = sqlDataReader.GetString(3),
+                                    Observacao = sqlDataReader.GetString(5),
+                                    Modelo = new Modelo
+                                    {
+                                        Id = sqlDataReader.GetInt32(2),
+                                        Nome = sqlDataReader.GetString(1),
+                                        Marca = new Marca
+                                        {
+                                            Id = sqlDataReader.GetInt32(11),
+                                            Nome = sqlDataReader.GetString(10)
+                                        }
+                                    }
+                                },
+                                DataDeEntrada = sqlDataReader.GetDateTime(7),
+                                UsuarioEntrada = new Usuario { Id = sqlDataReader.GetInt32(8) },
+                                CustoHora = sqlDataReader.GetDecimal(9),
+                                Estacionamento = new Estacionamento { Id = sqlDataReader.GetInt32(13), Endereco = sqlDataReader.GetString(12) },
+                                DataDeSaida = dataSaida,
+                                UsuarioSaida = usuarioSaida,
+                                Valor = valor
+                            });
+                        }
+                    }
+                }
+                catch (SqlException)
+                {
+                    return registros;
+                }
+            }
+            return registros;
+        }
+
         public List<Registro> ListarItens()
         {
             throw new NotImplementedException();
         }
+
+        public List<Registro> GeraRelatorio(Relatorio relatorio)
+        {
+            List<Registro> registros = new List<Registro>();
+
+            using (SqlCommand sqlCommand = _conn.AbrirConexao().CreateCommand())
+            {
+                string retiraCarrosEstacionados = string.Empty;
+                if (!relatorio.IncluirCarrosEstacionados)
+                {
+                    retiraCarrosEstacionados = " AND Registros.DataDeSaida IS NOT NULL";
+                }
+
+                //Define o comando SQL como tipo Texto, utilizando Query diretamente no SQL
+                sqlCommand.CommandType = System.Data.CommandType.Text;
+                sqlCommand.CommandText = "SELECT Registros.Id, Modelos.Nome AS ModeloNome, Modelos.Id AS ModeloId, Veiculo.Placa, Veiculo.Id AS VeiculoId," +
+                                         " Veiculo.Observacao, Registros.Estacionamento, Registros.DataDeEntrada, Registros.UsuarioEntrada," +
+                                         " Estacionamentos.CustoHora, Marca.Nome AS MarcaNome, Marca.Id AS MarcaId, Estacionamentos.Nome AS EstacionamentoNome," +
+                                         " Estacionamentos.Id AS EstacionamentoId, Registros.DataDeSaida, Registros.UsuarioSaida, Registros.Valor" +
+                                         " FROM Veiculo" +
+                                         " INNER JOIN Registros ON Veiculo.Id = Registros.Veiculo" +
+                                         " INNER JOIN Modelos ON Veiculo.Modelo = Modelos.Id" +
+                                         " INNER JOIN Estacionamentos ON Registros.Estacionamento = Estacionamentos.Id" +
+                                         " INNER JOIN Marca ON Modelos.Marca = Marca.id" +
+                                         " WHERE (Estacionamentos.ID = @estacionamentoId AND Registros.DataDeEntrada > @dataInicio AND " +
+                                         " Registros.DataDeEntrada < @dataFinal " + retiraCarrosEstacionados + ")";
+
+                sqlCommand.Parameters.Add("@estacionamentoId", SqlDbType.Int).Value = relatorio.Estacionamento.Id;
+                sqlCommand.Parameters.Add("@dataInicio", SqlDbType.DateTime).Value = relatorio.Semana.DataInicial;
+                sqlCommand.Parameters.Add("@dataFinal", SqlDbType.DateTime).Value = relatorio.Semana.DataFinal;
+                
+                try
+                {
+                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DateTime dataSaida = DateTime.MinValue;
+                            Usuario usuarioSaida = null;
+                            Decimal valor = 0;
+
+                            //Valida dados para o relatorio
+                            //Data de Saida
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("DataDeSaida")))
+                            {
+                                dataSaida = sqlDataReader.GetDateTime(14);
+                            }
+
+                            //Funcionario que registra Saida
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("UsuarioSaida")))
+                            {
+                                usuarioSaida = new Usuario { Id = sqlDataReader.GetInt32(15) };
+                            }
+                            else
+                            {
+                                usuarioSaida = new Usuario { Id = 0 };
+                            }
+
+                            //Valor
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("Valor")))
+                            {
+                                valor = sqlDataReader.GetDecimal(16);
+                            }
+
+                            registros.Add(new Registro
+                            {
+                                Id = sqlDataReader.GetInt32(0),
+                                Veiculo = new Veiculo
+                                {
+                                    Id = sqlDataReader.GetInt32(4),
+                                    Placa = sqlDataReader.GetString(3),
+                                    Observacao = sqlDataReader.GetString(5),
+                                    Modelo = new Modelo
+                                    {
+                                        Id = sqlDataReader.GetInt32(2),
+                                        Nome = sqlDataReader.GetString(1),
+                                        Marca = new Marca
+                                        {
+                                            Id = sqlDataReader.GetInt32(11),
+                                            Nome = sqlDataReader.GetString(10)
+                                        }
+                                    }
+                                },
+                                DataDeEntrada = sqlDataReader.GetDateTime(7),
+                                UsuarioEntrada = new Usuario { Id = sqlDataReader.GetInt32(8) },
+                                CustoHora = sqlDataReader.GetDecimal(9),
+                                Estacionamento = new Estacionamento { Id = sqlDataReader.GetInt32(13), Endereco = sqlDataReader.GetString(12) },
+                                DataDeSaida = dataSaida,
+                                UsuarioSaida = usuarioSaida,
+                                Valor = valor
+                            });
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    //Log ex.ToString();
+                    return registros;
+                }
+            }
+            return registros;
+        }
+       
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

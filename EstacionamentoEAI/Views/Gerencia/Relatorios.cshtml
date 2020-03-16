@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewBag.Title = "Relatórios";
+    Layout = "~/Views/Shared/_LayoutGerencia.cshtml";
+}
+    <div class="container">
+        <p></p>
+        <h2>Relatórios</h2>
+        <p></p>
+        <div class="card-group">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Posição de Vagas</h5>
+                    <p class="card-text">Estacionamento : @ViewBag.Estacionamento</p><br />
+                    <p class="card-tex">Vagas Ocupadas: <h3>@ViewBag.VagasOcupadas </h3></p>
+                    <p class="card-tex">Vagas Disponíveis: <h3>@ViewBag.VagasDisponiveis </h3></p>
+                    <p class="card-tex">Vagas Total: <h3>@ViewBag.VagasTotal </h3></p>
+                </div>
+            </div>
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Relatório Semanal</h5>
+                    <h5 class="card-subtitle"><strong>Selecione a Data para o Relatório</strong></h5>
+                    <div class="card-text text-center">
+                    <br />
+                            <form method="post" action="@Url.Action("Semanal", "Gerencia")">
+                                <div class='col-sm-6'>
+                                    <div class="form-group row">
+                                        <br /><br />
+                                        <input type="date" name="dataRelatorio" max="@ViewBag.DiaDeHoje" min="2019-01-01" class="form-control">
+                                    </div>
+
+
+                                    <div class="form-group row">
+                                        <label for="incluiEstacionado">Incluir Carros Estacionados</label>
+                                        <input type="checkbox" name="incluiEstacionado" checked class="form-control form-check" />
+                                        <br /><br />
+                                        <button type="submit" name="relatorio_btn" value="relatorioSemanal" class="btn btn-success btn-lg">Visualizar Relatório</button>
+                                    </div>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

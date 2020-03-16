@@ -93,20 +93,15 @@ namespace EstacionamentoEAI.UnitTest
             bool atualizado = controller.RegistraSaida("AAA-0000");
             Assert.IsTrue(atualizado);
         }
-
-        [TestMethod]
-        public void CadastrarProprietario()
-        {
-        }
-
+        
         [TestMethod]
         public void CadastrarVeiculo()
         {
-            Veiculo veiculo = new Veiculo { Placa = "AAA-0000",
+            Veiculo veiculo = new Veiculo { Placa = "CCC-2222",
                 Modelo = new Modelo {
-                    Id = 1,
-                    Nome = "TLX",
-                    Marca = new Marca { Id = 1 }
+                    Id = 507,
+                    Nome = "306",
+                    Marca = new Marca { Id = 220 }
                 },
                 Observacao = "",
                 Cliente = new Cliente()
@@ -125,20 +120,54 @@ namespace EstacionamentoEAI.UnitTest
             Assert.AreNotEqual(0, listModelos.Count);
         }
 
+        [TestMethod]
+        public void TestaSemana()
+        {
+            Semana semana = new Semana(new DateTime(2020, 3, 11), DayOfWeek.Sunday);
+            DateTime dataInicialTest = new DateTime(2020, 3, 8);
+            DateTime dataFinalTest = new DateTime(2020, 3, 15);
+            //Assert.AreEqual(semana.DataInicial, dataInicialTest);
+            Assert.AreEqual(semana.DataFinal, dataFinalTest);
+        }
+
+        [TestMethod]
+        public void GerarRelatorioSemanal()
+        {
+            RegistroDAO registroDAO = new RegistroDAO(conn);
+            Semana semana = new Semana(new DateTime(2020, 3, 11), DayOfWeek.Sunday);
+            Estacionamento estacionamento = new Estacionamento { Id = 1 };
+            Relatorio relatorio = new Relatorio(semana, estacionamento);
+            relatorio.IncluirCarrosEstacionados = false;
+
+            List<Registro> registros = registroDAO.GeraRelatorio(relatorio);
+
+            Assert.AreNotEqual(0, registros.Count);
+        }
 
         [TestMethod]
         public void AdicionarMarca()
         {
+
         }
+        
         [TestMethod]
         public void AdicionarModeloVeiculo()
         {
         }
         
+        [TestMethod]
+        public void GerarHistorico()
+        {
+            RegistroDAO registroDAO = new RegistroDAO(conn);
+            List<Registro> registros = registroDAO.ListarItens("FQJ4636");
+
+            Assert.AreNotEqual(0, registros.Count);
+        }
 
         [TestMethod]
-        public void GerarRelatorio()
+        public void CadastrarProprietario()
         {
         }
+
     }
 }

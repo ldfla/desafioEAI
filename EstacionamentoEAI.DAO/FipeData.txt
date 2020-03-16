@@ -1,0 +1,62 @@
+﻿Utilizado para extrair os dados dos Veiculos para carga inicial
+
+
+    [HttpGet]
+    public FileContentResult GetFIPE()
+    {
+        List<MarcaFipe> marcas = null;
+        List<VeiculoFipe> veiculos = null;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri("http://fipeapi.appspot.com/");
+            Task<HttpResponseMessage> responseMessageMarcas = client.GetAsync("api/1/carros/marcas.json");
+            responseMessageMarcas.Wait();
+
+            var result = responseMessageMarcas.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var lerMarcas = result.Content.ReadAsStringAsync();
+                lerMarcas.Wait();
+                marcas = JsonConvert.DeserializeObject<List<MarcaFipe>>(lerMarcas.Result);
+                    
+
+                foreach (var marca in marcas)
+                {
+                    Task<HttpResponseMessage> responseMessageVeiculos = client.GetAsync($"api/1/carros/veiculos/{marca.Id}.json");
+                    responseMessageVeiculos.Wait();
+                    result = responseMessageVeiculos.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var lerVeiculos = result.Content.ReadAsStringAsync();
+                        veiculos = JsonConvert.DeserializeObject<List<VeiculoFipe>>(lerVeiculos.Result);
+
+                        foreach (var veiculo in veiculos)
+                        {
+                            stringBuilder.AppendLine($"{marca.Name};{veiculo.Name}");
+                        }
+                    }
+                }
+            }
+        }
+        return File(Encoding.UTF8.GetBytes(stringBuilder.ToString()), "text/csv", "Veiculos.csv");
+    }
+
+    public class MarcaFipe
+    {
+        public int Id { get; set; }
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public string Fipe_Name { get; set; }
+    }
+
+    public class VeiculoFipe
+    {
+        public string Fipe_Marca { get; set; }
+        public string Name { get; set; }
+        public string Marca { get; set; }
+        public string Key { get; set; }
+        public int Id { get; set; }
+        public string Fipe_Name { get; set; }
+    }

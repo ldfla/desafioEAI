@@ -40,7 +40,7 @@ namespace EstacionamentoEAI.DAO
                     case "placa":
                         placa = objeto[1].ToString();
                         selectQuery = "SELECT ID, Placa, Modelo, Observacao, Cliente FROM Veiculo WHERE Placa = @placa";
-                        sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = placa;
+                        sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = placa.Replace("-", "").ToUpper() ;
                         break;
                     default:
                         return veiculo;
@@ -73,7 +73,7 @@ namespace EstacionamentoEAI.DAO
                 sqlCommand.CommandText = "INSERT into Veiculo (Placa, Modelo, Observacao, Cliente) VALUES (@placa, @modelo, @observacao, @cliente) SELECT SCOPE_IDENTITY()";
 
                 //Adiciona os parametros de Inserção. 
-                sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = model.Placa;
+                sqlCommand.Parameters.Add("@placa", SqlDbType.NVarChar).Value = model.Placa.Replace("-","").ToUpper();
                 sqlCommand.Parameters.Add("@modelo", SqlDbType.Int).Value = model.Modelo.Id;
                 sqlCommand.Parameters.Add("@observacao", SqlDbType.NVarChar).Value = model.Observacao;
                 sqlCommand.Parameters.Add("@cliente", SqlDbType.Int).Value = model.Cliente.Id;
@@ -94,8 +94,7 @@ namespace EstacionamentoEAI.DAO
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-
+        
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

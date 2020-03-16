@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Text.RegularExpressions;
 
 namespace EstacionamentoEAI.Controllers
 {
@@ -46,7 +47,7 @@ namespace EstacionamentoEAI.Controllers
         public ActionResult Index(FormCollection formCollection)
         {
             string action = formCollection["controle_btn"];
-            string placa = formCollection["placaVeiculo"].ToUpper();
+            string placa = formCollection["placaVeiculo"].Replace("-","").ToUpper();
 
             switch (action)
             {
@@ -85,8 +86,14 @@ namespace EstacionamentoEAI.Controllers
         [HttpGet]
         public ActionResult Estacionado(string placa)
         {
-            ViewBag.Placa = placa.ToUpper();
-            return View();
+            placa = placa.Replace("-", "").ToUpper();
+            if (VerificaPlaca(placa))
+            {
+                ViewBag.Placa = placa.Replace("-", "").ToUpper();
+                return View();
+            }
+
+            return RedirectToAction("Index", "Estacionamento");
         }
 
         /// <summary>
@@ -97,9 +104,14 @@ namespace EstacionamentoEAI.Controllers
         [HttpGet]
         public ActionResult ErroSaida(string placa)
         {
+            placa = placa.Replace("-", "").ToUpper();
             string razaoErroSaida = VerificaRazaoErroSaida(placa);
-            ViewBag.Placa = placa.ToUpper();
-            return View();
+            if (VerificaPlaca(placa))
+            {
+                ViewBag.Placa = placa.ToUpper();
+                return View();
+            }
+            return RedirectToAction("Index", "Estacionamento");
         }
 
         /// <summary>
@@ -110,8 +122,13 @@ namespace EstacionamentoEAI.Controllers
         [HttpGet]
         public ActionResult Saida(string placa)
         {
-            ViewBag.Placa = placa.ToUpper();
-            return View();
+            placa = placa.Replace("-", "").ToUpper();
+            if (VerificaPlaca(placa))
+            {
+                ViewBag.Placa = placa;
+                return View();
+            }
+            return RedirectToAction("Index", "Estacionamento");
         }
 
         /// <summary>
@@ -120,19 +137,25 @@ namespace EstacionamentoEAI.Controllers
         /// <param name="marca"></param>
         /// <returns>Lista no formato Json</returns>
         [HttpPost]
-
-
         public JsonResult ListaModelos(int marca)
         {
             List<Modelo> ModeloList = ListaModelosPorMarca(marca);
             return Json(ModeloList, JsonRequestBehavior.AllowGet);
         }
-
-       
-
+        
         #region private Methods
 
+        private bool VerificaPlaca(string placa)
+        {
+            //Regex para as placas AAA-0000, AAA0000 e AAA0A00
+            string padraoBrasilMercosul = @"([A-Z]{3}\-?[0-9]([0-9]|[A-Z])[0-9]{2})";
 
+            if (Regex.IsMatch(placa, padraoBrasilMercosul, RegexOptions.IgnoreCase))
+                return true;
+
+            return false;
+        }
+        
         private string VerificaRazaoErroSaida(string placa)
         {
             RegistroDAO registroDAO = new RegistroDAO(conn);

@@ -129,6 +129,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Estacionamento.cs" />
+    <Compile Include="Models\Gerencia.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +139,7 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Relatorio.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -277,6 +279,8 @@
     <Content Include="Views\Gerencia\CarrosEstacionados.cshtml" />
     <Content Include="Views\Gerencia\Historico.cshtml" />
     <Content Include="Views\Shared\_LayoutGerencia.cshtml" />
+    <Content Include="Views\Gerencia\Relatorios.cshtml" />
+    <Content Include="Views\Gerencia\Semanal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

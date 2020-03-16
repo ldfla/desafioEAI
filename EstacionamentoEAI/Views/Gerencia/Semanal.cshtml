@@ -1,7 +1,7 @@
-﻿@model IEnumerable<EstacionamentoEAI.Definition.Registro>
+﻿@model IEnumerable<EstacionamentoEAI.Definition.Relatorio>
 @{
     Layout = "";
-    ViewBag.Title = "Historico (" + ViewBag.Placa + ")";
+    ViewBag.Title = $"Registro de Atividades entre {ViewBag.DataInicial} e {ViewBag.DataFinal}";
 }
 <!DOCTYPE html>
 <html>
@@ -16,39 +16,26 @@
     <div class="relatorio">
         <div class="pagina">
             <div class="conteudo">
-                <h1>Histórico do Veiculo  : @ViewBag.Placa</h1>
+                <h1>@ViewBag.Title</h1>
                 <div class="tabela">
                     <div class="tabelaCabecalho">
                         <div class="tabelaRow">
-                            <div class="tabelaCell">ID</div>
-                            <div class="tabelaCell">Placa</div>
-                            <div class="tabelaCell">Marca</div>
-                            <div class="tabelaCell">Modelo</div>
-                            <div class="tabelaCell">Data de Entrada</div>
-                            <div class="tabelaCell">Data de Saída</div>
-                            <div class="tabelaCell">Valor</div>
+                            <div class="tabelaCell">Dia</div>
+                            <div class="tabelaCell">Total de Carros</div>
+                            <div class="tabelaCell">Total de Carros Únicos</div>
+                            <div class="tabelaCell">Total de Carros Repetidos</div>
+                            <div class="tabelaCell">Receita</div>
                         </div>
                     </div>
                     <div class="tabelaCorpo">
                         @foreach (var item in Model)
                         {
                             <div class="tabelaRow">
-                                <div class="tabelaCell">@item.Id</div>
+                                <div class="tabelaCell">@item.Semana.DataInicial</div>
                                 <div class="tabelaCell">@item.Veiculo.Placa</div>
                                 <div class="tabelaCell">@item.Veiculo.Modelo.Marca.Nome</div>
                                 <div class="tabelaCell">@item.Veiculo.Modelo.Nome</div>
-                                <div class="tabelaCell">@item.DataDeEntrada</div>
-                                @if (item.DataDeSaida == DateTime.MinValue)
-                                {
-                                    <div class="tabelaCell"> Veículo no pátio </div>
-                                    <div class="tabelaCell">-</div>
-                                }
-                                else
-                                {
-                                    <div class="tabelaCell">@item.DataDeSaida</div>
-                                    <div class="tabelaCell">@(((decimal)item.Valor).ToString("C2"))</div>
-                                }
-
+                                <div class="tabelaCell">@item.DataDeEntrada</div>                                
                             </div>
                         }
 

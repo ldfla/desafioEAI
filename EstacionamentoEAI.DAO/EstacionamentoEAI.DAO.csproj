@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DataBase.txt" />
+    <Content Include="FipeData.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EsacionamentoEAI.Definition\EstacionamentoEAI.Definition.csproj">
