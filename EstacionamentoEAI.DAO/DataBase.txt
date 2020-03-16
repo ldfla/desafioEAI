@@ -164,6 +164,8 @@ GO
 ALTER DATABASE [EstacionamentoEAI] SET  READ_WRITE 
 GO
 
+USE [EstacionamentoEAI]
+GO
 
 INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Acura')  
 INSERT INTO [dbo].[Marca] ([Nome]) VALUES ('Agrale') 
